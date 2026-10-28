@@ -44,7 +44,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
     pathSegments.forEach((segment, index) => {
       accumulatedPath += `/${segment}`;
       const isLast = index === pathSegments.length - 1;
-      const label = ROUTE_LABEL_MAP[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+      const label =
+        index === 1 && pathSegments[0] === 'patients'
+          ? 'Patient Profile'
+          : ROUTE_LABEL_MAP[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
 
       trail.push({
         label,
@@ -55,20 +58,23 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
     return trail;
   }, [items, location.pathname]);
 
-  if (derivedItems.length <= 1 && derivedItems[0]?.label === 'Dashboard') {
-    return null; // Keep dashboard top clean as in Figma node 1:154
+  if (
+    (derivedItems.length <= 1 && derivedItems[0]?.label === 'Dashboard') ||
+    location.pathname === '/patients'
+  ) {
+    return null; // Keep top clean as in Figma nodes 1:154 and 1:6657
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-4 text-xs font-medium text-[#494552]">
-      <ol className="flex items-center gap-1.5 flex-wrap">
+    <nav aria-label="Breadcrumb" className="mb-4 text-base font-normal text-[#494552]">
+      <ol className="flex items-center gap-2 flex-wrap">
         {derivedItems.map((item, index) => {
           const isLast = index === derivedItems.length - 1;
 
           return (
-            <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
+            <li key={`${item.label}-${index}`} className="flex items-center gap-2">
               {index > 0 && (
-                <ChevronRight className="size-3.5 text-[#7a7583]/70 shrink-0" aria-hidden="true" />
+                <ChevronRight className="size-4 text-[#494552] shrink-0" aria-hidden="true" />
               )}
               {item.href && !isLast ? (
                 <Link
@@ -79,7 +85,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
                 </Link>
               ) : (
                 <span
-                  className={isLast ? 'text-[#191c1d] font-semibold' : 'text-[#494552]'}
+                  className={isLast ? 'text-[#191c1d] font-medium' : 'text-[#494552]'}
                   aria-current={isLast ? 'page' : undefined}
                 >
                   {item.label}

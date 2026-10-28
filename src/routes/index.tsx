@@ -5,8 +5,11 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { PatientLayout } from '@/components/layout/PatientLayout';
 import { AuthLayout } from '@/components/layout/AuthLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { PatientDirectoryPage } from '@/pages/patients/PatientDirectoryPage';
+import { PatientProfilePage } from '@/pages/patients/PatientProfilePage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -92,40 +95,17 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Portal Route Group (AppLayout)
+  // Patient Management Route Group (PatientLayout matching Figma nodes 1:6657, 1:745, 1:473)
   {
-    element: <AppLayout />,
+    element: <PatientLayout />,
     children: [
-      // 1. Dashboard
-      {
-        path: '/dashboard',
-        element: <DashboardPage />,
-      },
-
-      // 2. Patient Management
       {
         path: '/patients',
-        element: (
-          <PlaceholderPage
-            title="Patient Directory"
-            description="Search, filter, and manage active clinical patient records."
-            module="Patients"
-            nodeId="1:3005 / 1:6657"
-            targetMilestone="Milestone 4"
-          />
-        ),
+        element: <PatientDirectoryPage />,
       },
       {
         path: '/patients/:id',
-        element: (
-          <PlaceholderPage
-            title="Patient Profile Summary"
-            description="Comprehensive clinical overview, vital stats, and medical timeline."
-            module="Patients"
-            nodeId="1:3200 / 1:473"
-            targetMilestone="Milestone 4"
-          />
-        ),
+        element: <PatientProfilePage />,
       },
       {
         path: '/patients/:id/history',
@@ -150,6 +130,18 @@ const router = createBrowserRouter([
             targetMilestone="Milestone 4"
           />
         ),
+      },
+    ],
+  },
+
+  // Portal Route Group (AppLayout for Dashboard & standard views)
+  {
+    element: <AppLayout />,
+    children: [
+      // 1. Dashboard
+      {
+        path: '/dashboard',
+        element: <DashboardPage />,
       },
 
       // 3. Medical Records
