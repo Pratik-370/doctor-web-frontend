@@ -35,7 +35,7 @@ export const AppLayout: React.FC = () => {
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 outline-none overflow-y-auto"
+          className="flex-1 min-w-0 p-4 sm:p-6 outline-none overflow-y-auto"
         >
           <div className="max-w-[1440px] mx-auto w-full">
             <Breadcrumbs />
