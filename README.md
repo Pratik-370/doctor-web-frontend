@@ -114,5 +114,5 @@ doctor-web-frontend/
 ## 6. Project Governance & Status
 
 - **Figma Design Scope**: 48 frames total (47 visible + 1 hidden), 2 exploratory drafts excluded (`1:12893` and `1:13265`), 46 production candidates (39 dedicated routes and 7 in-flow workflow states).
-- **Current Milestone**: Milestone 1 (Project Scaffolding & Foundation Setup) — **Complete**.
-- **Next Milestone**: Milestone 2 (Design Token Extraction & App Shell Architecture).
+- **Current Milestone**: Milestone 2 (Design Tokens & Shared Layout Shell) — **Complete**.
+- **Next Milestone**: Milestone 3 (Authentication & Onboarding Workflow).

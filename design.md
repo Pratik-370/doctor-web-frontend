@@ -124,11 +124,66 @@ All 18 frames of the CareID lifecycle chain are authorized as part of production
 
 ---
 
-## 4. Design Guidelines for Milestone 2
+## 4. Extracted Design Tokens & Layout Specifications (Milestone 2)
 
-During Milestone 2, the following will be extracted directly from Figma:
-- Typography rules: Font family (Plus Jakarta Sans), weights, line heights, letter-spacing.
-- Color system: Primary healthcare teal/blues, neutrals, semantics (success, warning, error, info), surface colors.
-- Elevation & shadows: Card elevation, popovers, drawers, modals.
-- Spacing & radii: Standard grid spacing (4px/8px rhythm), border radius tokens.
-- Layout shell: Sidebar navigation, top header bar, user badge, breadcrumb trail.
+### A. Typography
+- **Primary Font Family**: `Plus Jakarta Sans` (Google Fonts: 400, 500, 600, 700)
+- **Fallback Font Stack**: `system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
+- **Scale Hierarchy**:
+  - `Hero Stat`: `40px` / `leading-48px` / `tracking-[-0.8px]` / Bold (`700`)
+  - `H1 Page Title`: `32px` / `leading-40px` / `tracking-[-0.8px]` / SemiBold (`600`)
+  - `H2 Section Heading`: `24px` / `leading-32px` / `tracking-[-0.4px]` / SemiBold (`600`)
+  - `H3 Card / Modal Title`: `20px` / `leading-28px` / `tracking-[-0.2px]` / SemiBold (`600`)
+  - `Body Large`: `16px` / `leading-24px` / Regular (`400`) / SemiBold (`600`)
+  - `Body Default / Nav / Input`: `14px` / `leading-20px` / `tracking-[0.1px]` / Medium (`500`)
+  - `Caption / Badge / Detail`: `12px` / `leading-16px` / `tracking-[0.5px]` / Medium (`500`)
+
+### B. Color Tokens
+- **Brand Purple**:
+  - Gradient: `from-[#a44cff]` (Electric Violet) to `to-[#5b14b8]` (Deep Royal Purple)
+  - Deep Navy Text / CTA: `#28006d`
+  - Solid Indigo: `#3f1d8b`
+  - Active Nav Text: `#ab8efd`
+  - Subtle Decorative Blur: `rgba(40, 0, 109, 0.05)`
+- **Healthcare Medical Teal**:
+  - Primary Teal: `#006971`
+  - Badge Cyan: `#76f1ff`
+  - Subtle Cyan Fill: `rgba(0, 105, 113, 0.05)`
+  - Cyan Border: `rgba(0, 105, 113, 0.2)`
+- **Surfaces & Neutrals**:
+  - Workspace Background: `#f8f9fa`
+  - Sidebar & Input Background: `#f3f4f5`
+  - Card Surface: `#ffffff`
+  - Primary Text: `#191c1d`
+  - Secondary Text: `#494552`
+  - Muted Text / Outlines: `#7a7583`
+  - Subtle Borders / Placeholders: `#cbc4d4`
+  - Standard Panel Borders: `#e1e3e4` / `rgba(225, 227, 228, 0.5)`
+- **Semantic Status**:
+  - Critical / Red Alert: Text `#ba1a1a`, Fill `#ffdad6`, Subtle `rgba(186, 26, 26, 0.05)`, Border `rgba(186, 26, 26, 0.3)`
+  - Success / Active: Text `#006971`, Fill `#76f1ff`, Subtle `rgba(0, 105, 113, 0.05)`
+  - Warning: Text `#b45309`, Fill `#fef3c7`, Border `rgba(245, 158, 11, 0.3)`
+
+### C. Layout Shell Dimensions
+- **Desktop Baseline Width**: `1280px` (standard container max `1440px`)
+- **Top Navigation Bar (`Header`)**: Height `64px`, padding `px-6`, border-b `#e1e3e4`
+- **Side Navigation Bar (`Sidebar`)**: Width `256px`, top offset `top-16`, border-r `#e1e3e4`
+- **Main Workspace (`AppLayout`)**: Padding `p-6`, background `#f8f9fa`
+- **Authentication Shell (`AuthLayout`)**: Header `80px`, card `max-w-[480px]`, two-column split with hero panel
+- **Border Radii**:
+  - Bento Metric Cards / Main Panels: `20px` (`rounded-[20px]`)
+  - Authentication Card: `24px` (`rounded-[24px]`)
+  - Standard Form Inputs: `12px` (`rounded-[12px]`)
+  - Buttons: `8px` (`rounded-[8px]`)
+  - Active Nav Pills & Action CTAs: `9999px` (`rounded-full`)
+  - Small Tags / Badges: `4px` (`rounded-[4px]`)
+- **Shadows**:
+  - Card Shadow: `0px 2px 8px 0px rgba(0, 0, 0, 0.05)`
+  - TopBar Shadow: `0px 1px 1px 0px rgba(0, 0, 0, 0.05)`
+  - Auth Card Shadow: `0px 2px 32px 0px rgba(40, 0, 109, 0.08)`
+
+---
+
+## 5. Asset Library & Manifest Reference (Milestone 2B)
+
+All 31 production-verified visual and graphic assets (logos, illustrations, medical imagery, telemetry, and avatars) extracted from the Figma source of truth are cataloged in [`src/assets/README.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/assets/README.md).
