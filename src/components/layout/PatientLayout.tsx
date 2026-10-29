@@ -27,8 +27,9 @@ export const PatientLayout: React.FC = () => {
 
   const isPatientsRoute =
     location.pathname.startsWith('/patients') ||
-    location.pathname === '/records' ||
-    location.pathname.startsWith('/records/prescriptions') ||
+    (location.pathname.startsWith('/records') &&
+      !location.pathname.startsWith('/records/labs') &&
+      !location.pathname.startsWith('/records/imaging')) ||
     location.pathname.startsWith('/treatment-offers');
   const isReportsRoute =
     location.pathname.startsWith('/reports') ||

@@ -33,6 +33,37 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
   const derivedItems: BreadcrumbItem[] = React.useMemo(() => {
     if (items && items.length > 0) return items;
 
+    // Direct Figma frame breadcrumb alignments
+    if (location.pathname === '/records') {
+      return [
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Patients', href: '/patients' },
+        { label: 'Patient Profile', href: '/patients/HV-884-291' },
+        { label: 'Medical Records' },
+      ];
+    }
+    if (location.pathname === '/records/labs' || location.pathname.startsWith('/records/labs/')) {
+      return [
+        { label: 'Reports', href: '/reports' },
+        { label: 'Laboratory Report' },
+      ];
+    }
+    if (location.pathname === '/records/imaging' || location.pathname.startsWith('/records/imaging/')) {
+      return [
+        { label: 'Reports', href: '/reports' },
+        { label: 'Imaging', href: '/records/imaging' },
+        { label: 'MRI Brain W/WO Contrast' },
+      ];
+    }
+    if (location.pathname === '/records/prescriptions') {
+      // Figma frame 1:6396 uses the dedicated Patient Medical Record banner instead of breadcrumbs
+      return [];
+    }
+    if (location.pathname.startsWith('/records/') && !location.pathname.startsWith('/records/prescriptions')) {
+      // Document viewer frame 1:5719 uses clean toolbar without top breadcrumb
+      return [];
+    }
+
     const pathSegments = location.pathname.split('/').filter(Boolean);
     if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === 'dashboard')) {
       return [{ label: 'Dashboard' }];
@@ -59,6 +90,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
   }, [items, location.pathname]);
 
   if (
+    derivedItems.length === 0 ||
     (derivedItems.length <= 1 && derivedItems[0]?.label === 'Dashboard') ||
     location.pathname === '/patients'
   ) {

@@ -9,6 +9,11 @@ import { AuthLayout } from '@/components/layout/AuthLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { PatientDirectoryPage } from '@/pages/patients/PatientDirectoryPage';
 import { PatientProfilePage } from '@/pages/patients/PatientProfilePage';
+import { MedicalRecordsPage } from '@/pages/records/MedicalRecordsPage';
+import { RecordDetailPage } from '@/pages/records/RecordDetailPage';
+import { PrescriptionsPage } from '@/pages/records/PrescriptionsPage';
+import { LabReportPage } from '@/pages/records/LabReportPage';
+import { RadiologyViewerPage } from '@/pages/records/RadiologyViewerPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -141,15 +146,7 @@ const router = createBrowserRouter([
       // 3. Medical Records
       {
         path: '/records',
-        element: (
-          <PlaceholderPage
-            title="Clinical Records & Notes Timeline"
-            description="Chronological clinical encounters, consultation notes, and diagnostic history."
-            module="Medical Records"
-            nodeId="1:4010 / 1:6023"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <MedicalRecordsPage />,
       },
       {
         path: '/records/new',
@@ -165,63 +162,23 @@ const router = createBrowserRouter([
       },
       {
         path: '/records/:id',
-        element: (
-          <PlaceholderPage
-            title="Clinical Note Detail & Version History"
-            description="Encounter documentation review, digital signature, and audit timeline."
-            module="Medical Records"
-            nodeId="1:4230 / 1:5719"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <RecordDetailPage />,
       },
       {
         path: '/records/labs',
-        element: (
-          <PlaceholderPage
-            title="Laboratory Reports Overview"
-            description="Pathology and laboratory diagnostic results panel."
-            module="Medical Records"
-            nodeId="1:4340"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <LabReportPage />,
       },
       {
         path: '/records/labs/:id',
-        element: (
-          <PlaceholderPage
-            title="Lab Diagnostic Detail"
-            description="Comprehensive analyte breakdowns, reference ranges, and abnormal indicators."
-            module="Medical Records"
-            nodeId="1:4450 / 1:2908"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <LabReportPage />,
       },
       {
         path: '/records/imaging',
-        element: (
-          <PlaceholderPage
-            title="Radiology & Imaging Viewer"
-            description="High-resolution clinical imaging review and radiologist reports."
-            module="Medical Records"
-            nodeId="1:4560 / 1:882 / 1:3203"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <RadiologyViewerPage />,
       },
       {
         path: '/records/imaging/:id',
-        element: (
-          <PlaceholderPage
-            title="Radiology & Imaging Viewer"
-            description="High-resolution clinical imaging review and radiologist reports."
-            module="Medical Records"
-            nodeId="1:4560 / 1:882 / 1:3203"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <RadiologyViewerPage />,
       },
       {
         path: '/records/pathology',
@@ -237,15 +194,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/records/prescriptions',
-        element: (
-          <PlaceholderPage
-            title="Prescriptions & Clinical History"
-            description="Active medications, dosage regimens, and electronic prescriptions."
-            module="Medical Records"
-            nodeId="1:6396"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <PrescriptionsPage />,
       },
 
       // 4. OCR & Document Processing
