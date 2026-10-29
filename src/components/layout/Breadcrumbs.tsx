@@ -14,7 +14,7 @@ interface BreadcrumbsProps {
 // Route path to readable name map (aligned with Figma node 1:473)
 const ROUTE_LABEL_MAP: Record<string, string> = {
   dashboard: 'Dashboard',
-  patients: 'Patient Directory',
+  patients: 'Patient Details',
   records: 'Health Records',
   labs: 'Lab Results',
   ocr: 'OCR Verification',

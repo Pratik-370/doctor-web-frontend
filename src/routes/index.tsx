@@ -4,7 +4,6 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { PatientLayout } from '@/components/layout/PatientLayout';
 import { AuthLayout } from '@/components/layout/AuthLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
@@ -95,10 +94,17 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Patient Management Route Group (PatientLayout matching Figma nodes 1:6657, 1:745, 1:473)
+  // Unified Clinical Portal Route Group (matching Figma nodes 1:154, 1:6657, 1:745, 1:473)
   {
     element: <PatientLayout />,
     children: [
+      // 1. Dashboard
+      {
+        path: '/dashboard',
+        element: <DashboardPage />,
+      },
+
+      // 2. Patient Management
       {
         path: '/patients',
         element: <PatientDirectoryPage />,
@@ -130,18 +136,6 @@ const router = createBrowserRouter([
             targetMilestone="Milestone 4"
           />
         ),
-      },
-    ],
-  },
-
-  // Portal Route Group (AppLayout for Dashboard & standard views)
-  {
-    element: <AppLayout />,
-    children: [
-      // 1. Dashboard
-      {
-        path: '/dashboard',
-        element: <DashboardPage />,
       },
 
       // 3. Medical Records
@@ -201,6 +195,18 @@ const router = createBrowserRouter([
             description="Comprehensive analyte breakdowns, reference ranges, and abnormal indicators."
             module="Medical Records"
             nodeId="1:4450 / 1:2908"
+            targetMilestone="Milestone 5"
+          />
+        ),
+      },
+      {
+        path: '/records/imaging',
+        element: (
+          <PlaceholderPage
+            title="Radiology & Imaging Viewer"
+            description="High-resolution clinical imaging review and radiologist reports."
+            module="Medical Records"
+            nodeId="1:4560 / 1:882 / 1:3203"
             targetMilestone="Milestone 5"
           />
         ),

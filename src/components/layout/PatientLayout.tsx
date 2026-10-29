@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   BarChart3,
@@ -15,6 +15,7 @@ import {
   Users,
 } from 'lucide-react';
 import { Logo } from '@/components/shared/Logo';
+import { Breadcrumbs } from './Breadcrumbs';
 import { cn } from '@/lib/utils';
 
 import doctorAvatarAdmin from '@/assets/avatars/doctor-avatar-admin.png';
@@ -24,7 +25,32 @@ export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isPatientsActive = location.pathname.startsWith('/patients');
+  const isPatientsRoute =
+    location.pathname.startsWith('/patients') ||
+    location.pathname === '/records' ||
+    location.pathname.startsWith('/records/prescriptions') ||
+    location.pathname.startsWith('/treatment-offers');
+  const isReportsRoute =
+    location.pathname.startsWith('/reports') ||
+    location.pathname.startsWith('/records/labs') ||
+    location.pathname.startsWith('/records/imaging');
+  const isSettingsRoute = location.pathname.startsWith('/settings');
+
+  const [isPatientsExpanded, setIsPatientsExpanded] = useState(() => isPatientsRoute);
+  const [isReportsExpanded, setIsReportsExpanded] = useState(() => isReportsRoute);
+  const [isProfileExpanded, setIsProfileExpanded] = useState(() => isSettingsRoute);
+
+  useEffect(() => {
+    if (isPatientsRoute) setIsPatientsExpanded(true);
+  }, [isPatientsRoute]);
+
+  useEffect(() => {
+    if (isReportsRoute) setIsReportsExpanded(true);
+  }, [isReportsRoute]);
+
+  useEffect(() => {
+    if (isSettingsRoute) setIsProfileExpanded(true);
+  }, [isSettingsRoute]);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d] flex font-sans">
@@ -99,54 +125,94 @@ export const PatientLayout: React.FC = () => {
               <span>Dashboard</span>
             </NavLink>
 
-            {/* Patients (Expanded Group) */}
+            {/* Patients (Collapsible Group) */}
             <div className="space-y-1">
-              <div className="w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium text-[#494552] cursor-default select-none">
+              <button
+                type="button"
+                onClick={() => setIsPatientsExpanded((prev) => !prev)}
+                aria-expanded={isPatientsExpanded}
+                aria-controls="patients-submenu"
+                className={cn(
+                  'w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                  isPatientsRoute && !isPatientsExpanded
+                    ? 'bg-[#3f1d8b]/15 text-[#3f1d8b] font-semibold'
+                    : 'text-[#494552] hover:bg-slate-200/60 hover:text-[#191c1d]'
+                )}
+              >
                 <div className="flex items-center gap-3">
                   <Users className="size-5 shrink-0 text-[#494552]" aria-hidden="true" />
                   <span>Patients</span>
                 </div>
-                <ChevronDown className="size-4 text-[#494552]" aria-hidden="true" />
-              </div>
+                <ChevronDown
+                  className={cn(
+                    'size-4 text-[#494552] transition-transform duration-200',
+                    isPatientsExpanded && 'rotate-180'
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
 
               {/* Nested Patient Sub-links (Figma node 1:6968) */}
-              <div className="pl-6 space-y-1">
-                <NavLink
-                  to="/patients"
-                  end
-                  className={({ isActive }) =>
-                    cn(
-                      'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors',
-                      isActive || (isPatientsActive && !location.pathname.includes('/history') && !location.pathname.includes('/vitals'))
-                        ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
-                        : 'text-[#494552] hover:bg-slate-200/60 font-normal'
-                    )
-                  }
-                >
-                  Patient Directory
-                </NavLink>
+              {isPatientsExpanded && (
+                <div id="patients-submenu" className="pl-6 space-y-1">
+                  <NavLink
+                    to="/patients"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Patient Details
+                  </NavLink>
 
-                <NavLink
-                  to="/records"
-                  className="w-[216px] h-10 flex items-center px-4 rounded-full text-base text-[#494552] hover:bg-slate-200/60 font-normal transition-colors"
-                >
-                  Health Records
-                </NavLink>
+                  <NavLink
+                    to="/records"
+                    end
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Health Records
+                  </NavLink>
 
-                <NavLink
-                  to="/treatment-offers"
-                  className="w-[216px] h-10 flex items-center px-4 rounded-full text-base text-[#494552] hover:bg-slate-200/60 font-normal transition-colors"
-                >
-                  Consultations
-                </NavLink>
+                  <NavLink
+                    to="/treatment-offers"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Consultations
+                  </NavLink>
 
-                <NavLink
-                  to="/records/prescriptions"
-                  className="w-[216px] h-10 flex items-center px-4 rounded-full text-base text-[#494552] hover:bg-slate-200/60 font-normal transition-colors"
-                >
-                  Prescriptions
-                </NavLink>
-              </div>
+                  <NavLink
+                    to="/records/prescriptions"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Prescriptions
+                  </NavLink>
+                </div>
+              )}
             </div>
 
             {/* Referrals */}
@@ -165,22 +231,136 @@ export const PatientLayout: React.FC = () => {
               <span>Referrals</span>
             </NavLink>
 
-            {/* Reports (Grouped) */}
-            <div className="w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium text-[#494552] hover:bg-slate-200/60 cursor-pointer transition-colors">
-              <div className="flex items-center gap-3">
-                <BarChart3 className="size-4.5 shrink-0 text-[#494552]" aria-hidden="true" />
-                <span>Reports</span>
-              </div>
-              <ChevronDown className="size-4 text-[#494552]" aria-hidden="true" />
+            {/* Reports (Collapsible Group — Figma node 1:2877/1:4514/1:6986) */}
+            <div className="space-y-1">
+              <button
+                type="button"
+                onClick={() => setIsReportsExpanded((prev) => !prev)}
+                aria-expanded={isReportsExpanded}
+                aria-controls="reports-submenu"
+                className={cn(
+                  'w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                  isReportsRoute && !isReportsExpanded
+                    ? 'bg-[#3f1d8b]/15 text-[#3f1d8b] font-semibold'
+                    : 'text-[#494552] hover:bg-slate-200/60 hover:text-[#191c1d]'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <BarChart3 className="size-4.5 shrink-0 text-[#494552]" aria-hidden="true" />
+                  <span>Reports</span>
+                </div>
+                <ChevronDown
+                  className={cn(
+                    'size-4 text-[#494552] transition-transform duration-200',
+                    isReportsExpanded && 'rotate-180'
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+
+              {isReportsExpanded && (
+                <div id="reports-submenu" className="pl-6 space-y-1">
+                  <NavLink
+                    to="/records/labs"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Lab Reports
+                  </NavLink>
+                  <NavLink
+                    to="/records/imaging"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Imaging
+                  </NavLink>
+                  <NavLink
+                    to="/reports"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Clinical Reports
+                  </NavLink>
+                </div>
+              )}
             </div>
 
-            {/* Profile (Grouped) */}
-            <div className="w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium text-[#494552] hover:bg-slate-200/60 cursor-pointer transition-colors">
-              <div className="flex items-center gap-3">
-                <User className="size-4.5 shrink-0 text-[#494552]" aria-hidden="true" />
-                <span>Profile</span>
-              </div>
-              <ChevronDown className="size-4 text-[#494552]" aria-hidden="true" />
+            {/* Profile (Collapsible Group — Figma node 1:4523/1:4826/1:2899) */}
+            <div className="space-y-1">
+              <button
+                type="button"
+                onClick={() => setIsProfileExpanded((prev) => !prev)}
+                aria-expanded={isProfileExpanded}
+                aria-controls="profile-submenu"
+                className={cn(
+                  'w-full h-11 flex items-center justify-between px-4 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                  isSettingsRoute && !isProfileExpanded
+                    ? 'bg-[#3f1d8b]/15 text-[#3f1d8b] font-semibold'
+                    : 'text-[#494552] hover:bg-slate-200/60 hover:text-[#191c1d]'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <User className="size-4.5 shrink-0 text-[#494552]" aria-hidden="true" />
+                  <span>Profile</span>
+                </div>
+                <ChevronDown
+                  className={cn(
+                    'size-4 text-[#494552] transition-transform duration-200',
+                    isProfileExpanded && 'rotate-180'
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+
+              {isProfileExpanded && (
+                <div id="profile-submenu" className="pl-6 space-y-1">
+                  <NavLink
+                    to="/settings"
+                    end
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    My Profile
+                  </NavLink>
+                  <NavLink
+                    to="/settings/security"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Account & Security
+                  </NavLink>
+                </div>
+              )}
             </div>
           </nav>
         </div>
@@ -285,6 +465,7 @@ export const PatientLayout: React.FC = () => {
           className="flex-1 p-6 outline-none overflow-y-auto"
         >
           <div className="max-w-[1440px] mx-auto w-full">
+            <Breadcrumbs />
             <Outlet />
           </div>
         </main>

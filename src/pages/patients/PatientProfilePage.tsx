@@ -1,7 +1,6 @@
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  ChevronRight,
   Video,
   Check,
   AlertTriangle,
@@ -58,21 +57,6 @@ export const PatientProfilePage: React.FC = () => {
 
   return (
     <div className="w-full space-y-6" data-node-id="1:473">
-      {/* Breadcrumbs (Figma node 1:498) */}
-      <nav className="flex items-center gap-2 text-sm text-[#494552]" aria-label="Breadcrumb">
-        <Link to="/dashboard" className="hover:text-[#191c1d] transition-colors">
-          Dashboard
-        </Link>
-        <ChevronRight className="size-3.5 text-[#494552]" aria-hidden="true" />
-        <Link to="/patients" className="hover:text-[#191c1d] transition-colors">
-          Patient Directory
-        </Link>
-        <ChevronRight className="size-3.5 text-[#494552]" aria-hidden="true" />
-        <span className="text-[#191c1d] font-medium" aria-current="page">
-          Patient Profile
-        </span>
-      </nav>
-
       {/* 12-Column Main Workspace Grid (Figma node 1:509) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* Left / Main Content Column (Span 9) (Figma node 1:510) */}

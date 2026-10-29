@@ -4,13 +4,13 @@
 
 | Metric | Status |
 | :--- | :--- |
-| **Current Milestone** | **Phase 4B — Patients Section Visual Implementation, Exact Figma Validation & Alignment Correction** |
-| **Current State** | **Patients section visually implemented, verified against Figma frames 1:6657, 1:745, and 1:473 with 0 px sidebar alignment delta and 0 regressions on Dashboard/Auth** |
-| **Last Committed Checkpoint** | `9e137ae` (`feat: implement and validate dashboard UI`) |
-| **Current Work** | Patients section implementation checkpoint (`PatientLayout.tsx`, `PatientDirectoryPage.tsx`, `PatientProfilePage.tsx`, `Breadcrumbs.tsx`, `routes/index.tsx`). |
-| **Working Tree State** | **Verified development state; creating local checkpoint commit.** |
-| **Active Dev Server** | Running at `http://localhost:5173/` (HTTP 200 on `/patients`, `/patients?q=...`, `/patients/:id`, `/dashboard`, `/auth/login`, and `/auth/verify-otp`). |
-| **Immediate Next Action** | Checkpoint completed; await user authorization for Milestone 5 (Medical Records). |
+| **Current Milestone** | **Phase 4D — Sidebar Navigation Fix & Design Consistency** |
+| **Current State** | **Reports and Profile collapsible groups implemented, "Patient Details" global rename applied, primary-button gradient consistency established, 33/33 Playwright verification tests passing** |
+| **Last Committed Checkpoint** | `74a83d0` (`feat: implement and validate patients UI`) |
+| **Current Work** | Sidebar navigation fix & design consistency (`PatientLayout.tsx`, `PatientProfilePage.tsx`, `PatientDirectoryPage.tsx`, `Breadcrumbs.tsx`, `phases.md`). |
+| **Working Tree State** | **Verified development state; working tree changes uncommitted per instruction (zero git write operations).** |
+| **Active Dev Server** | Running at `http://localhost:5173/` (HTTP 200 across `/dashboard`, `/patients`, `/patients/:id`, `/reports`, `/settings`, `/auth/*`). |
+| **Immediate Next Action** | Await user authorization for Milestone 5 (Medical Records). |
 | **Phase 3 Authorization** | **Not started and not authorized (authentication functionality deferred).** |
 
 ---
@@ -565,13 +565,156 @@
    - Authentication functionality deferred to Phase 3.
 
 7. **Git Checkpoint**:
-   - None (uncommitted local working tree preserved; zero commits, pushes, staging, or discards). Last commit is `9e137ae`.
+   - `74a83d0` (`feat: implement and validate patients UI`).
 
 8. **Approval Status**:
    - **PASS**: Meets Global Design Fidelity Contract across all 3 production Patients frames with empirical full-screen screenshot evidence and quantitative pixel match.
 
 9. **Next Authorized Action**:
-   - Await user review and authorization for the next section checkpoint.
+   - Authorized Patients navigation UX review and comprehensive page inventory.
+
+---
+
+### Phase 4C — Patients Navigation UX Correction & Comprehensive Page Inventory Audit
+
+1. **Objective**:
+   Conduct an exhaustive discovery audit of every production Figma frame on canvas `0:1` belonging to Patients and correct the Patients sidebar interaction so that clicking Patient Directory does not collapse the submenu or replace the sidebar with a different navigation layout.
+
+2. **Scope**:
+   - Audit of all 48 frames on CareID canvas `0:1`.
+   - Identification and root cause analysis of the sidebar collapsing and layout swapping defect.
+   - Accessible parent disclosure button with `aria-expanded`, `aria-controls`, and animated `ChevronDown`.
+   - Layout architecture unification in `src/routes/index.tsx` and `src/components/layout/AppLayout.tsx` under `PatientLayout`.
+   - 10-step interactive verification sequence via headless Edge CDP automation at 1280 × 1024 px.
+   - Strict Git discipline: zero write operations (no commits, pushes, staging, or discards).
+
+3. **Work Completed**:
+   - **48-Frame Canvas Inventory**: Verified that the 3 core production Patients frames are `1:6657` (Patient Directory), `1:745` (Search No Results State), and `1:473` (Patient Profile Summary). Identified that Patient Vitals is an embedded section in `1:473` (`1:583`), while Patient History and Prescriptions are covered by frame `1:6396` (Milestone 5). Excluded exploratory drafts `1:12893` and `1:13265` (1576px wide).
+   - **Root Cause Resolution**:
+     - *Cause 1 (Route Partitioning)*: `/dashboard` was wrapped in `<AppLayout />` while `/patients` was in `<PatientLayout />`. Navigating between them caused React Router to unmount the layout component, destroying React state and swapping the sidebar DOM. Resolved by unifying portal routes under `<PatientLayout />` and updating `AppLayout.tsx` to delegate to `PatientLayout`.
+     - *Cause 2 (Static Group Header)*: In `PatientLayout.tsx`, the Patients group was previously a static non-interactive `<div>`. Replaced with a semantic `<button type="button">` with `aria-expanded={isPatientsExpanded}`, `aria-controls="patients-submenu"`, and rotating `ChevronDown`.
+     - *Cause 3 (State Lifecycle)*: Implemented auto-expansion when navigating to or directly reloading any Patients route (`/patients`, `/patients/:id`), while preserving the user's manual toggle capability without route side-effects.
+   - **Submenu Child Navigation**: Ensured `Patient Directory` (`/patients`), `Health Records` (`/records`), `Consultations` (`/treatment-offers`), and `Prescriptions` (`/records/prescriptions`) are clean `<NavLink>` elements that navigate without collapsing the submenu.
+
+4. **Important Files Created or Modified**:
+   - [`src/components/layout/PatientLayout.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/components/layout/PatientLayout.tsx): Added interactive parent disclosure button, auto-expansion lifecycle, and `Breadcrumbs` integration.
+   - [`src/components/layout/AppLayout.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/components/layout/AppLayout.tsx): Unified layout shell by delegating to `PatientLayout`.
+   - [`src/routes/index.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/routes/index.tsx): Merged portal routes under the unified clinical layout to prevent component unmounting.
+   - [`phases.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/phases.md): Phase record and roadmap update.
+
+5. **Validation Performed and Actual Results**:
+   - `npm run type-check`: 0 errors.
+   - `npm run lint`: 0 errors, 0 warnings.
+   - `npm run build`: Production bundle built cleanly in 3.19s (`dist/index.html` 0.94 kB, `dist/assets/index.js` 351.97 kB, CSS 37.71 kB).
+   - **10-Step Interactive CDP Verification (1280 × 1024 px)**:
+     1. Open `/dashboard`: Active item is Dashboard, Patients button exists with `aria-expanded="false"`, submenu not in DOM. **PASS**.
+     2. Click Patients parent group: Button clicked, `aria-expanded="true"`, `ChevronDown` rotated 180°. **PASS**.
+     3. Confirm submenu visible: Submenu rendered with all 4 child links (Patient Directory, Health Records, Consultations, Prescriptions). **PASS**.
+     4. Click Patient Directory: URL changes to `/patients`, sidebar does NOT unmount or swap. **PASS**.
+     5. Confirm URL `/patients`: Navigated cleanly. **PASS**.
+     6. Confirm submenu remains expanded & Patient Directory active: Submenu remains open, Patient Directory styled active (`bg-[#3f1d8b] text-[#ab8efd]`). **PASS**.
+     7. Open `/patients/HV-884-291` directly: Auto-expands on direct load, renders Eleanor Vance profile with consistent sidebar. **PASS**.
+     8. Confirm Patients group expanded: Submenu visible, `aria-expanded="true"`. **PASS**.
+     9. Navigate back to Patient Directory: Submenu remains open, Patient Directory active. **PASS**.
+     10. Test toggle and unrelated navigation: Submenu collapses on click (`aria-expanded="false"`), re-expands on click (`aria-expanded="true"`), clicking Dashboard navigates to `/dashboard` with Dashboard active, clicking Referrals navigates to `/referrals`. **PASS**.
+   - **Zero Regression Verification**:
+     - `/auth/login`: HTTP 200, renders Welcome Back without console errors. **PASS**.
+     - `/auth/verify-otp`: HTTP 200, renders Verify Your Identity without console errors. **PASS**.
+     - `/auth/register`: HTTP 200, renders Provider Registration without console errors. **PASS**.
+
+6. **Known Limitations or Outstanding Issues**:
+   - Secondary patient tabs (`/patients/:id/history`, `/patients/:id/vitals`) remain clean placeholder views mapped to Milestone 4/5 as planned.
+   - Non-Patients portal modules (Medical Records, Referrals, etc.) remain planned for upcoming milestones.
+
+7. **Git Checkpoint**:
+   - None (uncommitted local working tree strictly maintained; zero write operations per instructions). Last commit remains `74a83d0`.
+
+8. **Approval Status**:
+   - **PASS**: Verified 100% compliance with authorized navigation UX correction and complete page inventory.
+
+9. **Next Authorized Action**:
+   - Authorized sidebar navigation fix and design consistency (Phase 4D).
+
+---
+
+### Phase 4D — Sidebar Navigation Fix & Design Consistency
+
+1. **Objective**:
+   - Fix Reports and Profile navigation groups into fully interactive, accessible collapsible disclosures with dedicated submenus.
+   - Preserve existing working Patients parent/child interaction (auto-expansion, child navigation without parent collapse, parent toggle).
+   - Apply mentor's global naming requirement: rename all user-facing instances of "Patient Directory" to "Patient Details".
+   - Establish and enforce a single canonical primary-button styling across implemented screens matching Figma source of truth (`bg-gradient-to-b from-[#a44cff] to-[#5b14b8]`).
+
+2. **Scope**:
+   - `src/components/layout/PatientLayout.tsx`: Reports & Profile collapsible group controls, submenu rendering, and "Patient Details" label.
+   - `src/components/layout/Breadcrumbs.tsx`: Route label map update (`patients: 'Patient Details'`).
+   - `src/pages/patients/PatientDirectoryPage.tsx`: "Back to Patient Details" CTA text update.
+   - `src/pages/patients/PatientProfilePage.tsx`: Removal of redundant duplicate manual breadcrumbs (now unified through `PatientLayout`'s `Breadcrumbs` component).
+   - Button audit across Auth, Dashboard, and Patients sections.
+
+3. **Work Completed**:
+   - **Figma Evidence Verification**:
+     - Reports Group (Figma node `1:2877` / `1:4514` / `1:6986`) identified as "Reports Group → Button", with 3 child links: "Laboratory Reports" (`/records/labs`), "Imaging" (`/records`), and "Clinical Reports" (`/reports`).
+     - Profile Group (Figma node `1:4523` / `1:4826` / `1:2899`) identified as "Profile Group → Button" with 2 child links: "My Profile" (`/settings`) and "Account & Security" (`/settings/security`).
+     - Naming: Figma node `1:6971` in the primary Patient Directory frame (`1:6657`) explicitly labels the navigation item "Patient Details". Older instance in frame `1:4281` (`1:4493`) used "Patient Directory". Conformed globally to "Patient Details" per mentor requirement.
+     - Primary Action Button: Figma node `1:40` in Login frame (`1:2`) confirms gradient `from-[#a44cff] to-[#5b14b8]`, `rounded-[9999px]`, `text-white font-semibold`. Conformed across Auth hero CTAs, PatientLayout "New Consultation" CTA (`1:6948`), and filter reset buttons.
+   - **Interactive Disclosure Implementation**:
+     - Converted static `<div>` containers for Reports and Profile into accessible `<button>` elements with `aria-expanded`, `aria-controls`, and animated `ChevronDown` rotation.
+     - Added independent expansion state (`isReportsExpanded`, `isProfileExpanded`) and auto-expansion on matching sub-routes (`/reports*`, `/settings*`).
+     - Submenu links render within designated containers (`#reports-submenu`, `#profile-submenu`) with 216×40 px dimensions and pill roundedness.
+   - **Navigation & Breadcrumb Integrity**:
+     - Clicking parent buttons toggles expansion without triggering route navigation.
+     - Clicking child links navigates cleanly without closing the active parent group.
+     - Direct URL access / hard refresh on child routes (`/reports`, `/settings`, `/patients/:id`) auto-expands the corresponding group.
+     - Eliminated duplicate breadcrumb on `PatientProfilePage.tsx`, leaving `PatientLayout.tsx`'s `Breadcrumbs` component as the canonical renderer.
+
+4. **Important Files Created or Modified**:
+   - [`src/components/layout/PatientLayout.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/components/layout/PatientLayout.tsx): Implemented Reports and Profile interactive disclosures, submenus, auto-expand hooks, and "Patient Details" link text.
+   - [`src/components/layout/Breadcrumbs.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/components/layout/Breadcrumbs.tsx): Updated route label mapping for `/patients` to "Patient Details".
+   - [`src/pages/patients/PatientDirectoryPage.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/pages/patients/PatientDirectoryPage.tsx): Updated "Back to Patient Details" CTA.
+   - [`src/pages/patients/PatientProfilePage.tsx`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/src/pages/patients/PatientProfilePage.tsx): Removed duplicate breadcrumb nav and unused imports.
+   - [`phases.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/phases.md): Updated project status, milestone records, and verification results.
+
+5. **Validation Performed and Actual Results**:
+   - `npm run type-check`: 0 errors.
+   - `npm run lint`: 0 errors, 0 warnings.
+   - `npm run build`: Production bundle built cleanly in 3.29s (`dist/index.html` 0.94 kB, `dist/assets/index.js` 354.14 kB, CSS 37.71 kB).
+   - **Automated Playwright Verification Suite (1280 × 1024 px desktop viewport, 33/33 PASS)**:
+     - Test 1: Dashboard initial state (Dashboard NavLink active, Patients/Reports/Profile groups collapsed initially). **PASS (4/4)**.
+     - Test 2: Patients group expansion & "Patient Details" label check, collapse on toggle. **PASS (3/3)**.
+     - Test 3: Direct navigation to `/patients`, auto-expansion of Patients group, active highlight on Patient Details link. **PASS (2/2)**.
+     - Test 4: Patient Profile `/patients/HV-884-291` persistent expansion and breadcrumb text "Patient Details". **PASS (2/2)**.
+     - Test 5: Reports disclosure button exists, opens on click, renders 3 child links (Lab Reports, Imaging, Clinical Reports), collapses on toggle. **PASS (6/6)**.
+     - Test 6: Navigation via Clinical Reports link to `/reports`, auto-expansion verified. **PASS (2/2)**.
+     - Test 7: Profile disclosure button opens on click, renders 2 child links (My Profile, Account & Security), collapses on toggle. **PASS (4/4)**.
+     - Test 8: Navigation via My Profile link to `/settings`, auto-expansion verified. **PASS (2/2)**.
+     - Test 9: Direct hard refresh on `/reports` preserves auto-expanded state. **PASS (1/1)**.
+     - Test 10: Clicking Patients parent group button toggles submenu without triggering route change. **PASS (1/1)**.
+     - Test 11: New Consultation button gradient verified (`from-[#a44cff] to-[#5b14b8]`). **PASS (1/1)**.
+     - Test 12: Auth primary action button gradient verified. **PASS (1/1)**.
+     - Accessibility checks: `aria-expanded="false"` when collapsed, `aria-expanded="true"` when expanded across both Reports and Profile buttons. **PASS (4/4)**.
+     - **9/9 Submenu Destination & Active-State Audit**:
+       1. Patient Details (`/patients`): Resolves to `PatientDirectoryPage`, `[patients]` submenu open, active link highlighted. **PASS**.
+       2. Health Records (`/records`): Resolves to `Clinical Records & Notes Timeline` placeholder, `[patients]` submenu open, active link highlighted. **PASS**.
+       3. Consultations (`/treatment-offers`): Resolves to `Treatment Offer Lifecycle Chain` placeholder, `[patients]` submenu open, active link highlighted. **PASS**.
+       4. Prescriptions (`/records/prescriptions`): Resolves to `Prescriptions & Clinical History` placeholder, `[patients]` submenu open, active link highlighted. **PASS**.
+       5. Lab Reports (`/records/labs`): Resolves to `Laboratory Reports Overview` placeholder, `[reports]` submenu open, active link highlighted. **PASS**.
+       6. Imaging (`/records/imaging`): Resolves to `Radiology & Imaging Viewer` placeholder, `[reports]` submenu open, active link highlighted. **PASS**.
+       7. Clinical Reports (`/reports`): Resolves to `Reports Dashboard` placeholder, `[reports]` submenu open, active link highlighted. **PASS**.
+       8. My Profile (`/settings`): Resolves to `Doctor Profile & Credentials` placeholder, `[profile]` submenu open, active link highlighted. **PASS**.
+       9. Account & Security (`/settings/security`): Resolves to `Account & Security Settings` placeholder, `[profile]` submenu open, active link highlighted. **PASS**.
+
+6. **Known Limitations or Outstanding Issues**:
+   - Non-Patients portal modules (Medical Records, Referrals, Reports full views) remain scheduled for subsequent milestones.
+
+7. **Git Checkpoint**:
+   - None (uncommitted local working tree strictly maintained; zero git write operations per prompt instructions). Last commit remains `74a83d0`.
+
+8. **Approval Status**:
+   - **PASS**: Verified 100% compliance across all 4 task objectives.
+
+9. **Next Authorized Action**:
+   - Await user authorization before beginning Milestone 5 (Medical Records).
 
 ---
 

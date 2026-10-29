@@ -187,7 +187,7 @@ export const PatientDirectoryPage: React.FC = () => {
                 className="w-full h-10 bg-gradient-to-b from-[#a44cff] to-[#5b14b8] hover:opacity-95 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#5b14b8]"
               >
                 <ArrowLeft className="size-4" aria-hidden="true" />
-                <span>Back to Patient Directory</span>
+                <span>Back to Patient Details</span>
               </button>
             </div>
           </div>
