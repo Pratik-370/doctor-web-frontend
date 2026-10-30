@@ -63,6 +63,36 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       // Document viewer frame 1:5719 uses clean toolbar without top breadcrumb
       return [];
     }
+    if (
+      location.pathname.includes('/financing') ||
+      location.pathname.includes('/cath-lab-safety') ||
+      location.pathname.includes('/pre-op')
+    ) {
+      // Frame 1:5316 and 1:14096 render their own integrated patient-contextual header breadcrumbs
+      return [];
+    }
+    if (location.pathname.startsWith('/treatment-offers/new')) {
+      return [
+        { label: 'Patients', href: '/patients' },
+        { label: 'Robert J. Sterling (#8472–9901)', href: '/patients/8472-9901' },
+        { label: 'Create Treatment Offer' },
+      ];
+    }
+    if (location.pathname.includes('/review')) {
+      return [
+        { label: 'Patients', href: '/patients' },
+        { label: 'Robert J. Sterling (#8472–9901)', href: '/patients/8472-9901' },
+        { label: 'Create Treatment Offer', href: '/treatment-offers/new/step-1' },
+        { label: 'Review & Send Offer' },
+      ];
+    }
+    if (location.pathname.includes('/sent') || location.pathname.includes('/status')) {
+      return [
+        { label: 'Patients', href: '/patients' },
+        { label: 'Robert J. Sterling (#8472–9901)', href: '/patients/8472-9901' },
+        { label: 'Treatment Offer #TR-8921' },
+      ];
+    }
 
     const pathSegments = location.pathname.split('/').filter(Boolean);
     if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === 'dashboard')) {

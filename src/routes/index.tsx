@@ -14,6 +14,11 @@ import { RecordDetailPage } from '@/pages/records/RecordDetailPage';
 import { PrescriptionsPage } from '@/pages/records/PrescriptionsPage';
 import { LabReportPage } from '@/pages/records/LabReportPage';
 import { RadiologyViewerPage } from '@/pages/records/RadiologyViewerPage';
+import { InsuranceFinancingHubPage } from '@/pages/financing/InsuranceFinancingHubPage';
+import { TreatmentOfferCreatePage } from '@/pages/treatment-offers/TreatmentOfferCreatePage';
+import { TreatmentOfferReviewPage } from '@/pages/treatment-offers/TreatmentOfferReviewPage';
+import { TreatmentOfferStatusPage } from '@/pages/treatment-offers/TreatmentOfferStatusPage';
+import { CathLabSafetyCheckinPage } from '@/pages/cath-lab/CathLabSafetyCheckinPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -117,6 +122,10 @@ const router = createBrowserRouter([
       {
         path: '/patients/:id',
         element: <PatientProfilePage />,
+      },
+      {
+        path: '/patients/:id/financing',
+        element: <InsuranceFinancingHubPage />,
       },
       {
         path: '/patients/:id/history',
@@ -377,88 +386,40 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: '/treatment-offers/new',
+        element: <TreatmentOfferCreatePage />,
+      },
+      {
         path: '/treatment-offers/new/step-1',
-        element: (
-          <PlaceholderPage
-            title="Step 1: Patient Verification"
-            description="Verify patient eligibility, active insurance coverage, and baseline records."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:14736"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferCreatePage />,
       },
       {
         path: '/treatment-offers/new/step-2',
-        element: (
-          <PlaceholderPage
-            title="Step 2: Clinical Diagnosis"
-            description="Specify primary diagnoses, ICD-10 codes, and clinical justifications."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:14810"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferCreatePage />,
       },
       {
         path: '/treatment-offers/new/step-3',
-        element: (
-          <PlaceholderPage
-            title="Step 3: Treatment Selection"
-            description="Select surgical or non-surgical procedural packages."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:14890"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferCreatePage />,
       },
       {
         path: '/treatment-offers/new/step-4',
-        element: (
-          <PlaceholderPage
-            title="Step 4: Cost Estimation & Financing"
-            description="Configure prompt-settlement discounts and CareID 0% APR installment options."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:5316 / 1:14970"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferCreatePage />,
       },
       {
         path: '/treatment-offers/new/step-5',
-        element: (
-          <PlaceholderPage
-            title="Step 5: Terms & Clinical Consent"
-            description="Review clinical consent disclosures and legal financing notices."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:15050"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferCreatePage />,
       },
       {
         path: '/treatment-offers/:id/review',
-        element: (
-          <PlaceholderPage
-            title="Step 6: Review & Send Treatment Offer"
-            description="Final physician sign-off before electronic transmission to patient app."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:7538 / 1:15130"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferReviewPage />,
       },
       {
         path: '/treatment-offers/:id/sent',
-        element: (
-          <PlaceholderPage
-            title="Step 7: Offer Sent Confirmation"
-            description="SMS & encrypted app dispatch status."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:7986 / 1:15210"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferStatusPage />,
+      },
+      {
+        path: '/treatment-offers/:id/status',
+        element: <TreatmentOfferStatusPage />,
       },
       {
         path: '/treatment-offers/:id/accepted',
@@ -486,15 +447,15 @@ const router = createBrowserRouter([
       },
       {
         path: '/treatment-offers/:id/pre-op',
-        element: (
-          <PlaceholderPage
-            title="Pre-Procedure Readiness Checklist"
-            description="NPO compliance, lab clearance, informed consent, and anesthesia verification."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:12355 / 1:15450"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <CathLabSafetyCheckinPage />,
+      },
+      {
+        path: '/treatment-offers/:id/cath-lab-safety',
+        element: <CathLabSafetyCheckinPage />,
+      },
+      {
+        path: '/cath-lab-safety',
+        element: <CathLabSafetyCheckinPage />,
       },
       {
         path: '/treatment-offers/:id/in-progress',

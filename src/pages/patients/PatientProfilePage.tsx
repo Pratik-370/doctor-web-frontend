@@ -390,7 +390,7 @@ export const PatientProfilePage: React.FC = () => {
       {/* Primary Action CTA Button (Figma node 1:662) */}
       <button
         type="button"
-        onClick={() => navigate('/treatment-offers')}
+        onClick={() => navigate(`/patients/${patient.healthVaultId}/financing`)}
         className="w-full h-12 rounded-full bg-gradient-to-b from-[#a44cff] to-[#5b14b8] hover:opacity-95 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-[0px_4px_6px_-1px_rgba(63,29,139,0.3),0px_2px_4px_-2px_rgba(63,29,139,0.3)] transition-all focus:outline-none focus:ring-2 focus:ring-[#5b14b8]"
       >
         <ShieldAlert className="size-4" aria-hidden="true" />

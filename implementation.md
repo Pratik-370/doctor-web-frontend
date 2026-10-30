@@ -31,13 +31,87 @@
 | **Milestone 3** | **Authentication & Onboarding** | Login, Registration, Password Recovery, 2FA/MFA, Session Management, protected route gates. | Pending Authorization |
 | **Milestone 4** | **Doctor Dashboard & Patient Directory** | Practice overview metrics, upcoming appointments, patient list, patient profile summary, search & filtering. | Pending Authorization |
 | **Milestone 5** | **Medical Records, Lab Results & OCR** | Health timelines, clinical notes, lab diagnostic reports, document viewer, OCR upload & parsing workflow. | Pending Authorization |
-| **Milestone 6** | **Referrals, Consultations & Reporting** | Inbound/outbound referrals, specialist consultations, clinical analytics, custom reporting exports. | Pending Authorization |
-| **Milestone 7** | **Treatment Offer & Procedure Lifecycle** | Complete 18-step treatment offer sequence (`1:14736` through `1:16047`), multi-step wizard, prescription creation, encounter completion. | Pending Authorization |
-| **Milestone 8** | **Production Hardening & Verification** | Performance optimization, accessibility audits, end-to-end user journey verification, deployment readiness. | Pending Authorization |
+| **Milestone 6** | **Insurance & Financing Hub** | Comprehensive clinical financing comparison workstation (`1:5316`), 3 financing packages (Care ID Direct, HealthPay, MedPay), side-by-side terms comparison matrix, sticky dynamic footer, patient profile entry and treatment offer workflow exit. | **COMPLETED** |
+| **Milestone 7** | **Treatment Offer Creation & Review Workflow** | Treatment Offer authoring (`1:7011`), Review & Send with Patient Mobile Preview (`1:7538`), Dispatched Offer Status & Lifecycle Trajectory (`1:7986`). | **COMPLETED** |
+| **Milestone 8** | **Intra-Procedure Cath Lab Safety Check-in** | Cath Lab clinical time-out (`1:14096`), 6 multidisciplinary safety safeguards, severe allergy precautions, dual biometrics, telemetry sparkline, and cryptographic handshake ratification. | **COMPLETED** |
+| **Milestone 9** | **Encounter Completion & Production Hardening** | Cath Lab encounter completion (`1:16047`), digital signatures, accessibility audit, performance optimization. | Pending Authorization |
 
 ---
 
-## 3. Milestone 1: Execution Record
+## 6. Milestone 7: Execution Record (Treatment Offer Creation & Review Workflow)
+
+### Authoritative Design References
+- **Figma Frame `1:7011`**: `Create Treatment Offer` (`1280 × 2160.5 px`) -> `/treatment-offers/new/step-1` (and `step-2`..`step-5`)
+- **Figma Frame `1:7538`**: `Care ID Doctor - Review & Send Treatment Offer` (`1280 × 2014 px`) -> `/treatment-offers/:id/review`
+- **Figma Frame `1:7986`**: `offer status` (`1280 × 2167 px`) -> `/treatment-offers/:id/status` & `/treatment-offers/:id/sent`
+
+### Objectives Achieved
+1. **Interactive Treatment Offer Authoring Workspace (`TreatmentOfferCreatePage.tsx`, node `1:7011`)**:
+   - Built the complete multi-section authoring interface matching Figma's 12-column layout (7:5 split).
+   - Patient Context Header Banner matching Robert J. Sterling (#8472–9901), self-pay status, allergy alert, with return navigation to `/patients/8472-9901/financing` and `/patients/8472-9901`.
+   - 4-Stage Stepper indicating Step 1 (Completed financing options), Step 2 (Active configure offer), Step 3 (Upcoming review), and Step 4 (Upcoming acceptance).
+   - Section A: Treatment Procedure & Clinical Context (CPT #93458 Diagnostic Angiogram, $5,200.00 baseline, #REF-4491 referral).
+   - Section B: Treatment Discount & Cash Settlement with live calculation banner, interactive % vs $ modes, slider from 0% to 20%, live -$780.00 savings calculation, and 20% cap validation badge.
+   - Section C: Financing Option Integration seamlessly receiving the package selected in the Financing Hub (Care ID In-House 0% APR Plan, $368.33/mo for 12 mos, or full cash settlement).
+   - Section D: Offer Validity & Remarks (Cardiac Catheterization Treatment Package, Nov 1 2026 expiration, personalized doctor notes, compliance confirmation checkbox).
+   - Right Column: Master Live Offer Breakdown Card with reactive price calculations, pre-approved installment reassurance, CareID purple gradient CTA "Review & Generate Offer", Save Draft toast, and audit compliance footer card.
+
+2. **Clinician Review & Patient Mobile Simulator (`TreatmentOfferReviewPage.tsx`, node `1:7538`)**:
+   - 4-Stage Stepper with Step 3 Active ("Review & Send to Patient").
+   - Detailed read-only offer breakdown (Target Procedure, Financial Calculation Matrix Table with $780 savings pill, Attached 0% Financing Structure, Clinical Message & Doctor Attestation).
+   - Patient-Facing Mobile View Preview ("Care ID iOS / Android") rendering a phone preview ticket with live price strip, 0% installment chip, doctor note snippet, and accept/decline action buttons.
+   - Working "Open Expanded Patient Preview Modal" rendering the full interactive mobile app simulator.
+   - Action controls: Back to Edit Offer, Save Draft, Simulate Error warning, and primary "Send Treatment Offer to Patient" gradient CTA.
+
+3. **Dispatched Offer Status & Lifecycle Trajectory (`TreatmentOfferStatusPage.tsx`, node `1:7986`)**:
+   - Success & Status Hero Banner (Green gradient, "Treatment Offer Sent Successfully", badge "Pending Patient Review (#TR-8921)", metadata strip).
+   - Visual Offer Lifecycle Trajectory with 5-phase horizontal stepper (Draft Created -> Dispatched -> Patient Review (Active) -> Digital Sign-Off -> Cath Lab Clearance).
+   - Left Column: Procedure Specifications, Financial Breakdown Matrix, Active Financing Integration, Automated Dispatch Sequence (3-step timeline).
+   - Right Column: Live Dispatch Monitor with 3 active channels (App Push Delivered, SMS Delivered, Web Synced), interactive "Resend Patient SMS Link" button triggering notification toast, Clinician Actions (View Full Offer Agreement PDF modal with printable summary, Modify Offer Terms, Withdraw Offer dialog), and Cryptographic Hash audit card (`SHA256-8921-TR-VERIFIED-7A890D`).
+
+4. **Prompt 23 Expert UI/UX & Data Corrections**:
+   - **Primary CTA Geometry Restored**: Fixed invalid Tailwind class `h-13` to exact Figma `h-[48px]`, `rounded-[9999px]`, CareID vertical gradient `bg-gradient-to-b from-[#a44cff] to-[#5b14b8]`, text-[14px] font-bold text-white, and Figma drop shadow. Bounding box confirmed via Playwright: `392.66 × 48px`.
+   - **Secondary Actions Symmetric Alignment**: Unified `Save Draft` and `Cancel Offer` to matching `h-[38px]`, `rounded-[12px]`, `border border-[#e2e8f0]`, `bg-white`, `px-[17px]`, `flex-1`, and `gap-[6px]`. Bounding boxes confirmed via Playwright: `190.33 × 38px` each.
+   - **Financing Data Calculation Bug Resolved**: Eliminated `$4,420.00 / mo` error. Corrected ID mismatch (`careid-0` vs `careid-zero`), dynamic calculation engine computes `$368.33 / mo` for 12 months with `$4,420.00` total payable.
+   - **Live In-Page Package Switching**: Clicking any of the 4 packages dynamically updates monthly installment, terms, APR, and summary breakdown cards in real time.
+   - **Safe Direct-URL Fallback**: Navigating directly to `/treatment-offers/new/step-1` without router state safely initializes defaults without crashing.
+   - **Dynamic Downstream Binding**: Review (`1:7538`) and Status (`1:7986`) screens dynamically bind the selected package name, monthly payment, term months, APR, and totals across Section 3, Mobile Ticket, Simulator Modal, Status Card 3, and PDF Modal.
+
+5. **Quality Gates & Non-Regression**:
+   - `npm run type-check`: 0 errors.
+   - `npm run lint`: 0 errors, 0 warnings.
+   - `npm run build`: Production bundle cleanly compiled in 4.66s.
+   - Automated Playwright verification passing all 8 audit suites and 10/10 non-regression routes.
+
+---
+
+## 7. Milestone 8: Execution Record (Intra-Procedure Cath Lab Safety Check-in)
+
+### Authoritative Design References
+- **Figma Frame `1:14096`**: `Care ID Doctor - Patient & Clinical Safety Verification` (`1280 × 1840.5 px`) -> `/treatment-offers/:id/cath-lab-safety`, `/treatment-offers/:id/pre-op`, `/cath-lab-safety`
+
+### Objectives Achieved
+1. **Cath Lab Clinical Time-Out Workstation (`CathLabSafetyCheckinPage.tsx`, node `1:14096`)**:
+   - Header with Live EHR Sync, Cath Lab Station #04 badge, New Encounter CTA, and Attending Physician profile.
+   - Procedure Context strip with Active Context (`Robert J. Sterling`, CID `#8472-9901`, `Coronary Angiogram & Possible PCI`) and 4-phase workflow stepper.
+   - Breadcrumb Navigation Bar with active WHO Cath-Lab protocol indicator and live clock (`10:42:18 EST`).
+   - Time-Out Hero Card (`bg-gradient-to-r from-[#28006d] via-[#3f1d8b] to-[#28006d]`) with "MANDATORY PAUSE", "Section 4.1 Surgical Checklist", and dynamic 6-safeguard ratification circular gauge.
+   - High-Density 12-Column Grid (6:6):
+     - Card 1: Patient Identity & Biometrics (Dual credential authentication, DOB, NFC token, wristband protocol, photo, verbal confirmation).
+     - Card 2: Clinical Safety & Allergy Safeguards (Severe Penicillin allergy banner, Metformin 52hr hold, Coagulation INR 1.1, Platelet count 240,000, real-time baseline vitals).
+     - Card 3: Diagnostic & Imaging Correlation (Treadmill stress test with mini ECG sparkline chart, Transthoracic Echo TTE with ~55% preserved LVEF).
+     - Card 4: Planned Procedure & Access Site (CPT #93458, Tier-1 Access, Right Radial Artery with Allen's test positive, Right Common Femoral Artery rescue access, Mount Sinai #03 suite, Siemens Artis Q, Isovue-370 contrast).
+     - Card 5: Signed Consents & Clearance (e-Signed informed consent, Care ID financial settlement #FIN-TR8921-12M $4,420 settled cleared).
+     - Card 6: Team Time-Out Roster (Dr. Michael Chang MD, Keith Vance RN, J. Morales CST, Standby MAC Provider CR).
+   - Persistent Bottom Action Bar with signature stamping, Return to Check-In action, interactive Flag Safety Hold modal & state, and primary "Confirm & Start Encounter" CTA (`width=231px, height=52px`).
+   - Cryptographic Time-Out Ratification & Electronic Signature stamping modal (`SHA256-CATH-TIMEOUT-93458-VERIFIED-9B41E8C2`).
+2. **Quality Gates & Non-Regression**:
+   - `npm run type-check`: 0 errors.
+   - `npm run lint`: 0 errors, 0 warnings.
+   - `npm run build`: Production bundle cleanly compiled in 7.27s.
+   - Automated Playwright verification passing all 10 workflow and non-regression tests.
+
+---
 
 ### Objectives Achieved
 1. **Toolchain & Runtime Setup**:

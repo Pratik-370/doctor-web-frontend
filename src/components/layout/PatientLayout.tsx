@@ -25,12 +25,18 @@ export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isSpecialWorkstation =
+    location.pathname.includes('/financing') ||
+    location.pathname.includes('/cath-lab-safety') ||
+    location.pathname.includes('/pre-op');
+
   const isPatientsRoute =
     location.pathname.startsWith('/patients') ||
     (location.pathname.startsWith('/records') &&
       !location.pathname.startsWith('/records/labs') &&
       !location.pathname.startsWith('/records/imaging')) ||
-    location.pathname.startsWith('/treatment-offers');
+    location.pathname.startsWith('/treatment-offers') ||
+    location.pathname.startsWith('/cath-lab-safety');
   const isReportsRoute =
     location.pathname.startsWith('/reports') ||
     location.pathname.startsWith('/records/labs') ||
@@ -390,82 +396,87 @@ export const PatientLayout: React.FC = () => {
       {/* Right: Main Content Wrapper (Figma node 1:6658 / 1:474) */}
       <div className="flex-1 min-w-0 flex flex-col bg-[#f8f9fa] min-h-screen">
         {/* Workspace Header - TopNavBar (Figma node 1:6659 / 1:475) */}
-        <header className="h-16 w-full bg-[#f8f9fa] border-b border-[#e1e3e4] px-6 flex items-center justify-between drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sticky top-0 z-30 shrink-0">
-          {/* Left: Global Search Input (Figma node 1:6661) */}
-          <div className="relative w-full max-w-[410px]">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#7a7583]">
-              <Search className="size-4.5" aria-hidden="true" />
-            </div>
-            <input
-              type="search"
-              placeholder="Search patients, ID, or appointments..."
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-[#f3f4f5] border border-[#cbc4d4] text-sm text-[#191c1d] placeholder:text-[#494552] focus:outline-none focus:ring-2 focus:ring-[#5b14b8]/30 transition-colors"
-            />
-          </div>
-
-          {/* Right: Utility Controls & Clinician Thumbnail (Figma node 1:6668) */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Notifications Button with Red Badge */}
-            <button
-              type="button"
-              onClick={() => navigate('/notifications')}
-              className="relative p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
-              aria-label="Notifications"
-            >
-              <Bell className="size-5" />
-              <span
-                className="absolute top-2 right-2 size-2 bg-[#ba1a1a] rounded-full border border-white"
-                aria-hidden="true"
+        {!isSpecialWorkstation && (
+          <header className="h-16 w-full bg-[#f8f9fa] border-b border-[#e1e3e4] px-6 flex items-center justify-between drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] sticky top-0 z-30 shrink-0">
+            {/* Left: Global Search Input (Figma node 1:6661) */}
+            <div className="relative w-full max-w-[410px]">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#7a7583]">
+                <Search className="size-4.5" aria-hidden="true" />
+              </div>
+              <input
+                type="search"
+                placeholder="Search patients, ID, or appointments..."
+                className="w-full h-10 pl-10 pr-4 rounded-full bg-[#f3f4f5] border border-[#cbc4d4] text-sm text-[#191c1d] placeholder:text-[#494552] focus:outline-none focus:ring-2 focus:ring-[#5b14b8]/30 transition-colors"
               />
-            </button>
+            </div>
 
-            {/* Help Button */}
-            <button
-              type="button"
-              onClick={() => navigate('/settings')}
-              className="p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
-              aria-label="Help and Clinical Support"
-            >
-              <HelpCircle className="size-5" />
-            </button>
+            {/* Right: Utility Controls & Clinician Thumbnail (Figma node 1:6668) */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Notifications Button with Red Badge */}
+              <button
+                type="button"
+                onClick={() => navigate('/notifications')}
+                className="relative p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
+                aria-label="Notifications"
+              >
+                <Bell className="size-5" />
+                <span
+                  className="absolute top-2 right-2 size-2 bg-[#ba1a1a] rounded-full border border-white"
+                  aria-hidden="true"
+                />
+              </button>
 
-            {/* Settings Button */}
-            <button
-              type="button"
-              onClick={() => navigate('/settings')}
-              className="p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
-              aria-label="Settings"
-            >
-              <Settings className="size-5" />
-            </button>
-
-            {/* Doctor Profile Thumbnail (Figma node 1:6680) */}
-            <div className="pl-2">
+              {/* Help Button */}
               <button
                 type="button"
                 onClick={() => navigate('/settings')}
-                className="flex items-center rounded-full p-0.5 border-2 border-[#e7e8e9] hover:border-[#5b14b8] transition-colors focus:outline-none"
-                aria-label="Doctor Profile: Dr. Julian Vance"
+                className="p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
+                aria-label="Help and Clinical Support"
               >
-                <div className="size-7 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
-                  <img
-                    src={doctorProfilePrimary}
-                    alt="Dr. Julian Vance"
-                    className="size-full object-cover"
-                  />
-                </div>
+                <HelpCircle className="size-5" />
               </button>
+
+              {/* Settings Button */}
+              <button
+                type="button"
+                onClick={() => navigate('/settings')}
+                className="p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
+                aria-label="Settings"
+              >
+                <Settings className="size-5" />
+              </button>
+
+              {/* Doctor Profile Thumbnail (Figma node 1:6680) */}
+              <div className="pl-2">
+                <button
+                  type="button"
+                  onClick={() => navigate('/settings')}
+                  className="flex items-center rounded-full p-0.5 border-2 border-[#e7e8e9] hover:border-[#5b14b8] transition-colors focus:outline-none"
+                  aria-label="Doctor Profile: Dr. Julian Vance"
+                >
+                  <div className="size-7 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center">
+                    <img
+                      src={doctorProfilePrimary}
+                      alt="Dr. Julian Vance"
+                      className="size-full object-cover"
+                    />
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {/* Main Content Workspace (Figma node 1:6683) */}
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 p-6 outline-none overflow-y-auto"
+          className={cn(
+            'flex-1 outline-none overflow-y-auto',
+            isSpecialWorkstation ? 'p-0' : 'p-6'
+          )}
         >
-          <div className="max-w-[1440px] mx-auto w-full">
+          <div className={cn(isSpecialWorkstation ? 'w-full' : 'max-w-[1440px] mx-auto w-full')}>
             <Breadcrumbs />
             <Outlet />
           </div>
