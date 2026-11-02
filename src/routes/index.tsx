@@ -37,6 +37,11 @@ import { IncomingReferralReviewPage } from '@/pages/referrals/IncomingReferralRe
 import { ReferralSuccessPage } from '@/pages/referrals/ReferralSuccessPage';
 import { ReportsDashboardPage } from '@/pages/reports/ReportsDashboardPage';
 import { CriticalReportReviewPage } from '@/pages/reports/CriticalReportReviewPage';
+import { NotificationCenterPage } from '@/pages/notifications/NotificationCenterPage';
+import { ProfessionalProfilePage } from '@/pages/settings/ProfessionalProfilePage';
+import { AccountSecurityPage } from '@/pages/settings/AccountSecurityPage';
+import { NotificationPreferencesPage } from '@/pages/settings/NotificationPreferencesPage';
+import { SupportCenterPage } from '@/pages/settings/SupportCenterPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -322,32 +327,36 @@ const router = createBrowserRouter([
         ),
       },
 
-      // 7. Notifications & Alerts
+      // 7. Notifications & Alerts (Milestone 14 - Group E, Node 1:3950)
       {
         path: '/notifications',
-        element: (
-          <PlaceholderPage
-            title="Notification Center"
-            description="Critical clinical alerts, lab updates, and urgent consultation notices."
-            module="Notifications"
-            nodeId="1:3950 / 1:8010"
-            targetMilestone="Milestone 4"
-          />
-        ),
+        element: <NotificationCenterPage />,
       },
 
-      // 8. Doctor Profile & Clinic Settings
+      // 8. Doctor Profile & Clinic Settings (Milestone 14 - Group E)
       {
         path: '/settings',
-        element: (
-          <PlaceholderPage
-            title="Doctor Profile & Credentials"
-            description="Provider credentials, NPI, license verification, and specialty details."
-            module="Settings"
-            nodeId="1:4281 / 1:9010"
-            targetMilestone="Milestone 4"
-          />
-        ),
+        element: <ProfessionalProfilePage />,
+      },
+      {
+        path: '/settings/profile',
+        element: <ProfessionalProfilePage />,
+      },
+      {
+        path: '/settings/security',
+        element: <AccountSecurityPage />,
+      },
+      {
+        path: '/settings/notifications',
+        element: <NotificationPreferencesPage />,
+      },
+      {
+        path: '/settings/support',
+        element: <SupportCenterPage />,
+      },
+      {
+        path: '/support',
+        element: <SupportCenterPage />,
       },
       {
         path: '/settings/schedule',
@@ -357,18 +366,6 @@ const router = createBrowserRouter([
             description="Manage weekly slot availability, buffer times, and clinic block-outs."
             module="Settings"
             nodeId="1:9120"
-            targetMilestone="Milestone 4"
-          />
-        ),
-      },
-      {
-        path: '/settings/security',
-        element: (
-          <PlaceholderPage
-            title="Account & Security Settings"
-            description="2FA authentication, active sessions, and password management."
-            module="Settings"
-            nodeId="1:4531 / 1:9230"
             targetMilestone="Milestone 4"
           />
         ),

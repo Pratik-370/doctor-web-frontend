@@ -380,6 +380,19 @@ export const PatientLayout: React.FC = () => {
                   >
                     Account & Security
                   </NavLink>
+                  <NavLink
+                    to="/settings/notifications"
+                    className={({ isActive }) =>
+                      cn(
+                        'w-[216px] h-10 flex items-center px-4 rounded-full text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#5b14b8]',
+                        isActive
+                          ? 'bg-[#3f1d8b] text-[#ab8efd] font-semibold shadow-[0px_1px_1px_rgba(0,0,0,0.05)]'
+                          : 'text-[#494552] hover:bg-slate-200/60 font-normal'
+                      )
+                    }
+                  >
+                    Notification Preferences
+                  </NavLink>
                 </div>
               )}
             </div>
@@ -389,7 +402,7 @@ export const PatientLayout: React.FC = () => {
         {/* 5. Bottom Actions: Support & Sign Out (Figma node 1:7002) */}
         <div className="mt-auto px-2 pb-2 space-y-1">
           <NavLink
-            to="/settings"
+            to="/settings/support"
             className="w-full h-11 flex items-center gap-3 px-4 rounded-full text-sm font-medium text-[#494552] hover:bg-slate-200/60 hover:text-[#191c1d] transition-colors"
           >
             <HelpCircle className="size-5 shrink-0 text-[#494552]" aria-hidden="true" />
@@ -443,7 +456,7 @@ export const PatientLayout: React.FC = () => {
               {/* Help Button */}
               <button
                 type="button"
-                onClick={() => navigate('/settings')}
+                onClick={() => navigate('/settings/support')}
                 className="p-2 rounded-full text-[#494552] hover:bg-slate-200/60 transition-colors focus:outline-none"
                 aria-label="Help and Clinical Support"
               >

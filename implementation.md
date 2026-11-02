@@ -39,7 +39,7 @@
 | **Milestone 11** | **Surgical Encounter Completion & Terminal Procedure Lifecycle (Path A)** | Downstream intra-op telemetry and encounter completion (`1:14597`, `1:15031`, `1:15586`, `1:16047`). | **COMPLETED** |
 | **Milestone 12** | **Specialist Referrals & Consultations** | Outgoing & incoming referral workflows, specialist dossier, 5 bento metrics, and clinical attachments (`1:1535`, `1:1829`, `1:2072`, `1:2343`, `1:2559`). | **COMPLETED** |
 | **Milestone 13** | **Diagnostic Reports & Critical Alert Review** | Multi-domain reports dashboard, 4 bento metric cards, and STAT priority critical alert review workstation (`1:2590`, `1:3732`). | **COMPLETED** |
-| **Milestone 14** | **Clinician Profile, Account, Notifications & Help Center** | Communication, notification center, provider profile, security settings, notification preferences, and support help desk (`1:3950`, `1:4281`, `1:4531`, `1:4834`, `1:5113`). | Planned |
+| **Milestone 14** | **Clinician Profile, Account, Notifications & Help Center** | Communication, notification center, provider profile, security settings, notification preferences, and support help desk (`1:3950`, `1:4281`, `1:4531`, `1:4834`, `1:5113`). | **COMPLETED** |
 
 ---
 
@@ -484,6 +484,82 @@
    - ESLint: 0 errors, 0 warnings.
    - Production `vite build`: Clean compile in 5.15s (1,657 modules).
    - Working Tree Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review. Post-Milestone 13 progress stands at 41 of 46 production candidates (89.13%).
+
+---
+
+## 4.11 Milestone 14: Clinician Profile, Account, Notifications & Help Center Execution Records
+
+1. **Objective & Authoritative Scope**:
+   - Implement Group E: the final planned production implementation milestone in the Doctor-Web Master Development Roadmap, covering all 5 remaining authoritative Figma production frames:
+     1. `1:3950`: `Notification Center` (`1348 × 1082 px`) -> `/notifications` -> `NotificationCenterPage.tsx`
+     2. `1:4281`: `Doctor Web Portal - Professional Profile` (`1280 × 1080 px`) -> `/settings` -> `ProfessionalProfilePage.tsx`
+     3. `1:4531`: `Doctor Web Portal - Account & Security Settings` (`1280 × 1024 px`) -> `/settings/security` -> `AccountSecurityPage.tsx`
+     4. `1:4834`: `Doctor Web Portal - Notification Preferences` (`1280 × 1024 px`) -> `/settings/notifications` -> `NotificationPreferencesPage.tsx`
+     5. `1:5113`: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`) -> `/settings/support` -> `SupportCenterPage.tsx`
+
+2. **Architectural & Component Deliverables**:
+   - **Data Models & Types**:
+     - `src/pages/notifications/types.ts`: Notification types (`NotificationCategory`, `NotificationSeverity`, `NotificationItem`) and realistic clinical mock records (`INITIAL_NOTIFICATIONS`).
+     - `src/pages/settings/types.ts`: Profile data model (`DoctorProfile`, `DEFAULT_DOCTOR_PROFILE`), device security model (`TrustedDevice`, `INITIAL_TRUSTED_DEVICES`), security audit model (`SecurityAuditEntry`, `INITIAL_AUDIT_LOGS`), notification dispatch settings (`NotificationPreferences`, `DEFAULT_NOTIFICATION_PREFERENCES`), and FAQ topics (`HELP_TOPICS`).
+   - **Production Pages**:
+     - `src/pages/notifications/NotificationCenterPage.tsx`:
+       - 4 Bento summary metric cards: Unread Notifications, Critical Alerts, Pending Referrals, and Pending OCR.
+       - 8 Filter pills (`All`, `Unread`, `Critical`, `Patient`, `Referral`, `OCR`, `Prescription`, `System`) and live search input with keyword clearing.
+       - Notification item cards with category glyphs, 4px left severity border for critical items, interactive mark-as-read, and mark-all-as-read button.
+       - Direct action routing: critical potassium alert routes to `/reports/critical/PT-84920`; referral triage alert routes to `/referrals/incoming/REF-8924-A`.
+       - Right-hand digest & system preferences quick links widget.
+     - `src/pages/settings/ProfessionalProfilePage.tsx`:
+       - Shared top settings tab strip (`My Profile`, `Security`, `Notifications`, `Support`).
+       - Profile identity card with gradient banner, physician avatar with verification badge, NPI `1982736450`, Board Certified badge, Cath Lab Director badge, and clinical bio.
+       - Interactive "Edit Profile" modal with form binding and truthful client memory demonstration disclosures.
+       - Professional information card with California Medical License `CA-MED-948210`, active status, expiration date, and primary affiliation.
+       - Contact and campus directory cards with email, phone, emergency pager, and campus pavilion location.
+     - `src/pages/settings/AccountSecurityPage.tsx`:
+       - Two-Factor Authentication card: active TOTP authenticator status, hardware key (YubiKey 5C NFC) setup modal.
+       - Password update modal with 8+ character validation and input masking.
+       - Biometric login toggle and clinical session timeout dropdown (`15m`, `30m`, `1h`, `4h`) enforcing HIPAA audit rules.
+       - Trusted devices card with current workstation indicator and interactive session revocation confirmation dialog.
+       - Security audit log table with device, IP, timestamp, method, status, and CSV export action.
+     - `src/pages/settings/NotificationPreferencesPage.tsx`:
+       - Critical clinical alerts card: 4px red accent bar, SMS alert toggle, audible alert chime toggle, and locked browser push notifications with explicit hospital patient-safety policy disclaimer.
+       - Standard notifications multi-channel matrix: Email, In-App, and SMS checkboxes for Patient Updates, Referral Requests, Digital Prescriptions, and OCR Records.
+       - Email digest summary selector: Daily, Weekly, or Immediate delivery.
+       - Advance system maintenance notice toggle with toast confirmation.
+     - `src/pages/settings/SupportCenterPage.tsx`:
+       - FAQ search bar and 3 topic cards (`Clinical Workflows`, `Account Security`, `Troubleshooting`).
+       - Interactive collapsible accordions with detailed answers on time-out procedures, YubiKeys, and OCR flags.
+       - Need Direct Assistance card with "Submit IT Support Ticket" modal (subject, description, priority, category) and "Call Clinical IT Helpdesk" simulated speed-dial dialog (*4357 / +1 800-555-CARE).
+       - Version card (CareID Doctor Portal v2.4.1), Terms of Service modal, and HIPAA BAA governance modal.
+   - **Router & Navigation Integration**:
+     - `src/routes/index.tsx`: Replaced all Group E placeholders with production views at `/notifications`, `/settings`, `/settings/security`, `/settings/notifications`, and `/settings/support` (with aliases `/settings/profile` and `/support`).
+     - `src/components/layout/Breadcrumbs.tsx`: Suppressed duplicate breadcrumb bars for settings and notification pages to favor integrated tabs and headers.
+     - `src/components/layout/PatientLayout.tsx`: Updated Profile submenu with links to `/settings`, `/settings/security`, and `/settings/notifications`. Pointed sidebar Support link and Header Help icon directly to `/settings/support`.
+
+3. **Automated Verification & Quality Gates**:
+   - Automated Playwright end-to-end verification script (`scratch/test_milestone14_settings.js`):
+     - Step 1: Navigated to Notification Center (`1:3950`), verified 4 bento cards, filter pills, search, mark-all-as-read, and deep-link routing to `/reports/critical/PT-84920`.
+     - Step 2: Navigated to Professional Profile (`1:4281`), verified Dr. Julian Vance's details, NPI `1982736450`, License `CA-MED-948210`, badges, opened and saved Edit Profile modal.
+     - Step 3: Navigated to Account & Security (`1:4531`), verified 2FA status, password update modal, session timeout selector, revoked trusted device with confirmation dialog, and exported audit log.
+     - Step 4: Navigated to Notification Preferences (`1:4834`), verified enforced push disclaimer, toggled SMS alerts, updated digest frequency, and saved preferences.
+     - Step 5: Navigated to Support Center (`1:5113`), verified FAQ topics, search filter, submitted IT support ticket, tested speed dial hotline, and verified Terms of Service & HIPAA BAA legal modals.
+     - All 5 steps passed with 100% success rate.
+   - Measurable Visual QA at Reference Viewports:
+     - `1:3950` Notification Center (Viewport `1348 × 1082`): `mainWidth=1092px, mainHeight=1482.25px`.
+     - `1:4281` Professional Profile (Viewport `1280 × 1024`): `profileCardWidth=309.33px, profileCardHeight=634px` (Figma: `w=314.67px`).
+     - `1:4531` Account & Security (Viewport `1280 × 1024`): Controls column span 4, Audit log column span 8.
+     - `1:4834` Notification Preferences (Viewport `1280 × 1024`): Matrix span 8, Digest span 4.
+     - `1:5113` Support & Help Center (Viewport `1280 × 1024`): Top cards span 8 / 4, Bottom cards span 6 / 6.
+   - Non-Regression Verification Across All Completed Milestones:
+     - Milestone 9 OCR Pipeline (`test_prompt27_ocr_pipeline.js`): 100% PASS
+     - Milestone 10 Clinical Handoff & Scheduling (`test_prompt30_scheduling_workflow.js`): 100% PASS
+     - Milestone 11 Surgical Encounter (`test_prompt31_encounter_lifecycle.js`): 100% PASS
+     - Milestone 12 Referrals (`test_milestone12_referrals.js`): 100% PASS
+     - Milestone 13 Diagnostic Reports (`test_milestone13_reports.js`): 100% PASS
+   - Code Quality Checks:
+     - TypeScript `tsc -b --noEmit`: 0 errors.
+     - ESLint: 0 errors, 0 warnings.
+     - Production `vite build`: Clean compile in 5.19s (1,665 modules).
+   - Working Tree Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review. Progress stands at **46 of 46 production candidates (100.0%)**!
 
 ---
 
