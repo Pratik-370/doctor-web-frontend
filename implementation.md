@@ -337,6 +337,77 @@
 
 ---
 
+## 4.9 Milestone 12: Specialist Referrals & Consultations (Group C)
+
+1. **Milestone Objectives**:
+   - Implement the complete multi-specialty clinical referral and inbound consult triage workflow across the 5 authoritative Figma production frames in Group C:
+     - `1:1535`: `Doctor Web Portal - Referral Dashboard` (1280 × 1082 px) -> `/referrals`
+     - `1:1829`: `Doctor Web Portal - Create Referral` (1280 × 1024 px) -> `/referrals/new`
+     - `1:2072`: `Doctor Web Portal - Referral Details` (1280 × 1178 px) -> `/referrals/:id`
+     - `1:2343`: `Doctor Web Portal - Incoming Referral Review` (1280 × 1024 px) -> `/referrals/incoming/:id`
+     - `1:2559`: `Doctor Web Portal - Referral Success` (1280 × 1024 px) -> `/referrals/success`
+   - Reconcile Support Center (`1:5113`): Formally verified that `1:5113` belongs to Milestone 14 (Group E, `/settings/support`) and is preserved for that milestone.
+   - Fully activate the primary "Referrals" item in the master application sidebar.
+   - Maintain all core invariants: authenticated clinician profile docked at sidebar top, "Patient Details" navigation label, canonical CareID CTA gradient (`bg-gradient-to-b from-[#a44cff] to-[#5b14b8]`), and strict local Git working tree discipline without auto-commits.
+
+2. **Architectural Implementation**:
+   - **Data Layer & Types (`src/pages/referrals/types.ts`)**:
+     - Defined `ReferralDirection`, `ReferralPriority`, `ReferralStatus`, `ReferralSpecialty`, `ReferralAttachment`, `ReferralPatient`, `ReferralProvider`, `ReferralTimelineStep`, and `ReferralRecord`.
+     - Provided high-fidelity clinical fixtures (`DEFAULT_REFERRALS_DATA`) including John Doe (`REF-1042`, Urgent Cardiology), Robert Smith (`REF-1039`, Accepted Orthopedics), Emily Wong (`REF-0988`, Completed Radiology), Robert J. Oppenheimer (`REF-2023-8910`, Accepted Cardiology dossier matching Figma `1:2072`), and Robert Chen (`REF-8924-A`, High Priority Incoming Review matching Figma `1:2343`).
+   - **Router Registration (`src/routes/index.tsx`)**:
+     - Replaced placeholder entries under `// 5. Referrals & Consultations` with live workstation components:
+       - `/referrals` -> `<ReferralDashboardPage />`
+       - `/referrals/new` & `/referrals/consult` -> `<CreateReferralPage />`
+       - `/referrals/success` -> `<ReferralSuccessPage />`
+       - `/referrals/incoming/:id` -> `<IncomingReferralReviewPage />`
+       - `/referrals/:id` -> `<ReferralDetailsPage />`
+   - **Navigation & Breadcrumbs Integration (`src/components/layout/Breadcrumbs.tsx`)**:
+     - Configured `Breadcrumbs.tsx` to handle `/referrals` with `Home > Referrals` trail and to cleanly suppress default breadcrumbs for `/referrals/new`, `/referrals/incoming/:id`, `/referrals/success`, and `/referrals/:id` since each workstation renders its own contextual header line matching Figma specifications.
+
+3. **Interactive Clinical Workflows**:
+   - **Referral Management Dashboard (`1:1535`)**:
+     - Header: `Referral Hub` with subtitle and canonical `+ New Referral` CTA button.
+     - 5 Bento summary cards: Outgoing Referrals (24, This Week), Incoming Referrals (18, This Week), Pending Action (12, teal), Completed (45, 30d), and Urgent Attention (3, red alert card).
+     - Filter tab controls: `All`, `Outgoing`, `Incoming`, `Pending`, `Accepted`, `Urgent` pills with active state, search bar, More Filters modal trigger, and CSV export.
+     - Referrals table: Columns for Patient Details (avatars, DOB), ID, Direction & Provider (`↗` / `↙`), Specialty, Date, Priority badge (`▲ Urgent` / `Routine`), Status dot, and action dropdown menu with view, triage, and print slip actions.
+     - Pagination bar: Showing 1–5 of 42 referrals with interactive page buttons `< 1 2 3 >`.
+   - **Create Clinical Referral (`1:1829`)**:
+     - Header with breadcrumbs and `Referral History` link.
+     - Patient summary banner: Marcus Johnson (`HV-9284-771`, 48 Yrs / Male, O Positive) with verified check badge.
+     - Section 1 (Receiving Specialist): Doctor / facility search input, Specialty selector, Target Hospital / Clinic dropdown.
+     - Section 2 (Clinical Context): Primary Reason input, Clinical Summary & Findings textarea, and priority toggle pills (Routine / Urgent).
+     - Right Column (Included Data): Reactive counter (`3 Selected`), bundle checklist with `NEW` badge (Recent Labs, Imaging, Active Prescriptions, Recent Notes), and external file upload trigger.
+     - Submit Actions: `Send Referral` CTA dispatching with reactive bundle status and redirecting to `/referrals/success`, plus `Save as Draft` option.
+   - **Referral Details Dossier (`1:2072`)**:
+     - Header with reference `#REF-2023-8910`, `ACCEPTED` status pill, `Urgency: Routine`, Print, Download PDF, and Withdraw modal with confirmation.
+     - Patient & referring provider two-column card with photo avatar, MRN `HV360-112-884`, Dr. Sarah Chen contact info, and `Sent To` Dr. Elena Marcus card.
+     - Clinical Summary with Reason for Referral card, Primary Diagnoses pills (`Hypertension I10`, `Hyperlipidemia E78.5`), and Current Medications pills (`Lisinopril 20mg`, `Atorvastatin 40mg`).
+     - Attachments panel with 3 downloadable diagnostic files (`ECG_Results_Oct23.pdf`, `Lab_Panel_Fasting.pdf`, `Clinical_Notes_DrChen.txt`).
+     - Right Column: 5-step vertical Referral Status timeline (Referral Created, Received, Accepted, Reviewed, Completed) and `Review Referral` CTA.
+   - **Incoming Referral Review Workstation (`1:2343`)**:
+     - Top bar with `← Back to Referrals`, header `#REF-8924-A`, and `! HIGH PRIORITY` badge.
+     - Left Column: Robert Chen (`54 yrs • Male • DOB: 05/12/1969 • MRN: 9482-1004-X`), Referred By Dr. Sarah Jenkins (City Health Clinic) with `Contact PCP` action.
+     - Clinical Summary & Reason: Chief Complaint highlight box, PCP Notes, and diagnostic tags (`Angina Pectoris`, `Dyspnea`, `High CAD Risk`).
+     - Right Column: Latest Vitals 2x2 grid from PCP (BP `145/92 mmHg` in red, HR `88 bpm`, SpO2 `96%`, BMI `28.4`) and 3 diagnostic attachments with inline preview trigger.
+     - Fixed sticky bottom action bar: Reviewing status, `Decline` modal with clinical reason selector, `Request Info` modal for missing notes, and `✓ Accept Referral` action with scheduling transition.
+   - **Referral Success Confirmation (`1:2559`)**:
+     - Centered confirmation view with concentric cyan pulse rings, dark teal verified checkmark circle, `Referral Successfully Sent` title, explanatory subtitle, action buttons (`Return to Referrals`, `View Referral Details`), and tracking ID `#R-2023-8894A`.
+
+4. **Automated Verification & Quality Gates**:
+   - Automated Playwright end-to-end verification script (`scratch/test_milestone12_referrals.js`): All 5 screens and workflows verified with 100% pass rate.
+   - Visual comparison screenshots captured and verified against Figma references:
+     - `1_1535_browser_referral_dashboard.png` vs `1_1535_referral_dashboard.png`
+     - `1_1829_browser_create_referral.png` vs `1_1829_create_referral.png`
+     - `1_2559_browser_referral_success.png` vs `1_2559_referral_success.png`
+     - `1_2072_browser_referral_details.png` vs `1_2072_referral_details.png`
+     - `1_2343_browser_incoming_review.png` vs `1_2343_incoming_review.png`
+   - TypeScript `tsc -b --noEmit`: 0 errors.
+   - ESLint: 0 errors, 0 warnings.
+   - Production `vite build`: Clean compile in 6.08s.
+   - Working Tree Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review.
+
+---
+
 ## 5. Governance & Quality Gates
 
 Each milestone must satisfy the following criteria prior to user handover:

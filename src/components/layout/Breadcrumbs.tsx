@@ -79,10 +79,17 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       location.pathname.includes('/appointment') ||
       location.pathname.includes('/check-in') ||
       location.pathname.includes('/day-of-checkin') ||
-      location.pathname.includes('/scheduled')
+      location.pathname.includes('/scheduled') ||
+      (location.pathname.startsWith('/referrals/') && location.pathname !== '/referrals')
     ) {
       // Frames render their own integrated patient-contextual header breadcrumbs
       return [];
+    }
+    if (location.pathname === '/referrals') {
+      return [
+        { label: 'Home', href: '/dashboard' },
+        { label: 'Referrals' },
+      ];
     }
     if (location.pathname.startsWith('/treatment-offers/new')) {
       return [

@@ -30,6 +30,11 @@ import { ActiveProcedureDocumentationPage } from '@/pages/cath-lab/ActiveProcedu
 import { PostProcedureSummaryPage } from '@/pages/cath-lab/PostProcedureSummaryPage';
 import { EncounterCompletedPage } from '@/pages/cath-lab/EncounterCompletedPage';
 import { MedicalRecordUploadPage } from '@/pages/ocr/MedicalRecordUploadPage';
+import { ReferralDashboardPage } from '@/pages/referrals/ReferralDashboardPage';
+import { CreateReferralPage } from '@/pages/referrals/CreateReferralPage';
+import { ReferralDetailsPage } from '@/pages/referrals/ReferralDetailsPage';
+import { IncomingReferralReviewPage } from '@/pages/referrals/IncomingReferralReviewPage';
+import { ReferralSuccessPage } from '@/pages/referrals/ReferralSuccessPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -251,54 +256,30 @@ const router = createBrowserRouter([
         element: <MedicalRecordUploadPage />,
       },
 
-      // 5. Referrals & Consultations
+      // 5. Referrals & Consultations (Group C / Milestone 12)
       {
         path: '/referrals',
-        element: (
-          <PlaceholderPage
-            title="Referral Dashboard"
-            description="Track inbound patient transfers and outbound specialist consults."
-            module="Referrals"
-            nodeId="1:1535 / 1:6010"
-            targetMilestone="Milestone 6"
-          />
-        ),
+        element: <ReferralDashboardPage />,
       },
       {
         path: '/referrals/new',
-        element: (
-          <PlaceholderPage
-            title="Create Clinical Referral"
-            description="Author specialist referral with clinical necessity and attached records."
-            module="Referrals"
-            nodeId="1:1829 / 1:6120"
-            targetMilestone="Milestone 6"
-          />
-        ),
+        element: <CreateReferralPage />,
+      },
+      {
+        path: '/referrals/success',
+        element: <ReferralSuccessPage />,
       },
       {
         path: '/referrals/consult',
-        element: (
-          <PlaceholderPage
-            title="Specialist Consultation Request"
-            description="Request intra-departmental specialist opinions."
-            module="Referrals"
-            nodeId="1:6230"
-            targetMilestone="Milestone 6"
-          />
-        ),
+        element: <CreateReferralPage />,
+      },
+      {
+        path: '/referrals/incoming/:id',
+        element: <IncomingReferralReviewPage />,
       },
       {
         path: '/referrals/:id',
-        element: (
-          <PlaceholderPage
-            title="Referral Details & Feedback"
-            description="Specialist findings, clinical status, and consult recommendations."
-            module="Referrals"
-            nodeId="1:2072 / 1:6340"
-            targetMilestone="Milestone 6"
-          />
-        ),
+        element: <ReferralDetailsPage />,
       },
 
       // 6. Clinical Reports & Analytics

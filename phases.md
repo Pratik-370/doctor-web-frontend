@@ -88,11 +88,11 @@ Every canvas element has been audited, verified, and mapped below:
 | **34** | Cath Lab | Active Procedure Documentation | `Care ID Doctor - Active Procedure Documentation` | `1:15031` | `/treatment-offers/:id/encounter/active` (Registered) | `ActiveProcedureDocumentationPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
 | **35** | Cath Lab | Post-Procedure Clinical Summary | `Care ID Doctor - Post-Procedure Summary` | `1:15586` | `/treatment-offers/:id/post-op` (Registered) | `PostProcedureSummaryPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
 | **36** | Cath Lab | Encounter Completed & Sign-Off | `Care ID Doctor - Encounter Completed` | `1:16047` | `/treatment-offers/:id/completed` (Registered) | `EncounterCompletedPage.tsx` | Hidden Production Frame | Implemented — Awaiting Review (Authorized Inclusion) |
-| **37** | Referrals | Referral Management Dashboard | `Doctor Web Portal - Referral Dashboard` | `1:1535` | `/referrals` (Registered) | Not Implemented | Dedicated Page | Missing |
-| **38** | Referrals | Create Clinical Referral | `Doctor Web Portal - Create Referral` | `1:1829` | `/referrals/new` (Registered) | Not Implemented | Dedicated Page | Missing |
-| **39** | Referrals | Referral Clinical Details | `Doctor Web Portal - Referral Details` | `1:2072` | `/referrals/:id` (Registered) | Not Implemented | Dedicated Page | Missing |
-| **40** | Referrals | Incoming Referral Triage | `Doctor Web Portal - Incoming Referral Review` | `1:2343` | Proposed (`/referrals/incoming/:id`) | Not Implemented | Dedicated Page | Missing |
-| **41** | Referrals | Referral Dispatched Confirmation | `Doctor Web Portal - Referral Success` | `1:2559` | Proposed (`/referrals/success`) | Not Implemented | Workflow State | Missing |
+| **37** | Referrals | Referral Management Dashboard | `Doctor Web Portal - Referral Dashboard` | `1:1535` | `/referrals` (Registered) | `ReferralDashboardPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
+| **38** | Referrals | Create Clinical Referral | `Doctor Web Portal - Create Referral` | `1:1829` | `/referrals/new` (Registered) | `CreateReferralPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
+| **39** | Referrals | Referral Clinical Details | `Doctor Web Portal - Referral Details` | `1:2072` | `/referrals/:id` (Registered) | `ReferralDetailsPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
+| **40** | Referrals | Incoming Referral Triage | `Doctor Web Portal - Incoming Referral Review` | `1:2343` | `/referrals/incoming/:id` (Registered) | `IncomingReferralReviewPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
+| **41** | Referrals | Referral Dispatched Confirmation | `Doctor Web Portal - Referral Success` | `1:2559` | `/referrals/success` (Registered) | `ReferralSuccessPage.tsx` | Workflow State / Dedicated View | Implemented — Awaiting Review |
 | **42** | Reports | Diagnostic Reports Dashboard | `Doctor Web Portal - Reports Dashboard` | `1:2590` | `/reports` (Registered) | Not Implemented | Dedicated Page | Missing |
 | **43** | Reports | Critical Diagnostic Alert Review | `Doctor Web Portal - Critical Report Review` | `1:3732` | Proposed (`/reports/critical/:id`) | Not Implemented | Dedicated Page | Missing |
 | **44** | Notifications | Clinician Notification Center | `Notification Center` | `1:3950` | `/notifications` (Registered) | Not Implemented | Dedicated Page | Missing |
@@ -353,14 +353,14 @@ Following the completion of Milestone 10 (Clinical Handoff, Scheduling & Pre-Op 
 - **Node `1:15586`**: `Care ID Doctor - Post-Procedure Summary` (`1280 × 1922.5 px`) — **Implemented** (`PostProcedureSummaryPage.tsx`, `/treatment-offers/:id/post-op`)
 - **Node `1:16047`**: `Care ID Doctor - Encounter Completed` (`1280 × 1696.75 px`, Hidden on Canvas) — **Implemented** (`EncounterCompletedPage.tsx`, `/treatment-offers/:id/completed`)
 
-### Group C: Specialist Referrals & Consultations (5 Frames Remaining — Next Up: Milestone 12)
-1. **Node `1:1535`**: `Doctor Web Portal - Referral Dashboard` (`1280 × 1082 px`) — Inbound and outbound referral tracking, specialty filters, status triage.
-2. **Node `1:1829`**: `Doctor Web Portal - Create Referral` (`1280 × 1024 px`) — Structured physician referral authoring form with record attachments.
-3. **Node `1:2072`**: `Doctor Web Portal - Referral Details` (`1280 × 1178 px`) — Comprehensive case notes, specialist feedback, and consultation history.
-4. **Node `1:2343`**: `Doctor Web Portal - Incoming Referral Review` (`1280 × 1024 px`) — Clinical intake and triage for incoming patient referrals.
-5. **Node `1:2559`**: `Doctor Web Portal - Referral Success` (`1280 × 1024 px`) — Submission confirmation screen with tracking ID and print slip.
+### Group C: Specialist Referrals & Consultations (5/5 Completed — Milestone 12)
+1. **Node `1:1535`**: `Doctor Web Portal - Referral Dashboard` (`1280 × 1082 px`) — **Implemented** (`ReferralDashboardPage.tsx`, `/referrals`)
+2. **Node `1:1829`**: `Doctor Web Portal - Create Referral` (`1280 × 1024 px`) — **Implemented** (`CreateReferralPage.tsx`, `/referrals/new`)
+3. **Node `1:2072`**: `Doctor Web Portal - Referral Details` (`1280 × 1178 px`) — **Implemented** (`ReferralDetailsPage.tsx`, `/referrals/:id`)
+4. **Node `1:2343`**: `Doctor Web Portal - Incoming Referral Review` (`1280 × 1024 px`) — **Implemented** (`IncomingReferralReviewPage.tsx`, `/referrals/incoming/:id`)
+5. **Node `1:2559`**: `Doctor Web Portal - Referral Success` (`1280 × 1024 px`) — **Implemented** (`ReferralSuccessPage.tsx`, `/referrals/success`)
 
-### Group D: Diagnostic Reports & Critical Triage (2 Frames Remaining)
+### Group D: Diagnostic Reports & Critical Triage (2 Frames Remaining — Next Up: Milestone 13)
 6. **Node `1:2590`**: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — Master diagnostic reports dashboard across Pathology, Labs, and Imaging.
 7. **Node `1:3732`**: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — High-priority diagnostic panic alerts requiring urgent clinician sign-off.
 
@@ -424,30 +424,32 @@ Based on clinical workflow continuity, patient data dependencies, and completed 
 - **Verification**: Complete multi-step perioperative surgical lifecycle validated via Playwright end-to-end automation with browser screenshots captured for all 4 views. Zero TypeScript errors, zero lint warnings, clean Vite production build.
 - **Progress Milestone**: 35 of 46 production candidate frames (76.1%) implemented.
 
-### Priority 1 (Recommended Next Step): Milestone 12 — Specialist Referrals & Consultations
-- **Clinical Rationale**: Fully activates the primary "Referrals" item in the master application sidebar, replacing the existing `<PlaceholderPage title="Referrals Management" />` with an interactive, end-to-end multi-specialty consult management system.
-- **Required Figma Frames (5 Frames)**:
-  - `1:1535`: `Doctor Web Portal - Referral Dashboard` (`1280 × 1082 px`) — Inbound and outbound referral tracking.
-  - `1:1829`: `Doctor Web Portal - Create Referral` (`1280 × 1024 px`) — Physician referral authoring with document attachment.
-  - `1:2072`: `Doctor Web Portal - Referral Details` (`1280 × 1178 px`) — Case notes and specialist communication.
-  - `1:2343`: `Doctor Web Portal - Incoming Referral Review` (`1280 × 1024 px`) — Triage and acceptance for inbound consults.
-  - `1:2559`: `Doctor Web Portal - Referral Success` (`1280 × 1024 px`) — Dispatch confirmation slip.
-- **Dependencies**: Connects to Patient Profile (`1:473`) and Medical Records attachments (`1:6023`).
+### Milestone 12 (Completed): Specialist Referrals & Consultations
+- **Status**: **COMPLETED & VERIFIED** (Milestone 12)
+- **Delivered Frames (5 Frames in Group C)**:
+  - `1:1535`: `Doctor Web Portal - Referral Dashboard` (`1280 × 1082 px`) — `ReferralDashboardPage.tsx` (`/referrals`)
+  - `1:1829`: `Doctor Web Portal - Create Referral` (`1280 × 1024 px`) — `CreateReferralPage.tsx` (`/referrals/new`)
+  - `1:2072`: `Doctor Web Portal - Referral Details` (`1280 × 1178 px`) — `ReferralDetailsPage.tsx` (`/referrals/:id`)
+  - `1:2343`: `Doctor Web Portal - Incoming Referral Review` (`1280 × 1024 px`) — `IncomingReferralReviewPage.tsx` (`/referrals/incoming/:id`)
+  - `1:2559`: `Doctor Web Portal - Referral Success` (`1280 × 1024 px`) — `ReferralSuccessPage.tsx` (`/referrals/success`)
+- **Verification**: Complete multi-step referral management and clinical consult lifecycle validated via Playwright end-to-end automation with browser screenshots captured for all 5 views. Zero TypeScript errors, zero lint warnings, clean Vite production build.
+- **Progress Milestone**: 40 of 46 production candidate frames (87.0%) implemented.
 
-### Priority 2: Milestone 13 — Diagnostic Reports & Critical Alert Review
+### Priority 1 (Recommended Next Step): Milestone 13 — Diagnostic Reports & Critical Alert Review
 - **Clinical Rationale**: Establishes high-priority clinical panic triage for troponin elevations and acute diagnostic findings, replacing `<PlaceholderPage title="Clinical Reports" />`.
-- **Required Figma Frames (2 Frames)**: `1:2590` (Reports Dashboard), `1:3732` (Critical Report Review).
+- **Required Figma Frames (2 Frames in Group D)**:
+  - `1:2590`: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — Master diagnostic reports dashboard across Pathology, Labs, and Imaging.
+  - `1:3732`: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — High-priority diagnostic panic alerts requiring urgent clinician sign-off.
 - **Dependencies**: Integrates with existing Lab Viewer (`1:2908`) and Radiology Viewer (`1:3203`).
 
-### Priority 3: Milestone 14 — Clinician Profile, Account & Notification Center
+### Priority 2: Milestone 14 — Clinician Profile, Account, Notifications & Help Center
 - **Clinical Rationale**: Completes provider profile, digital credentials, 2FA hardware keys, alert routing, and IT support center.
-- **Required Figma Frames (4 Frames)**:
+- **Required Figma Frames (5 Frames in Group E)**:
   - `1:3950`: `Notification Center` (`1348 × 1082 px`)
   - `1:4281`: `Doctor Web Portal - Professional Profile` (`1280 × 1080 px`)
   - `1:4531`: `Doctor Web Portal - Account & Security Settings` (`1280 × 1024 px`)
   - `1:4834`: `Doctor Web Portal - Notification Preferences` (`1280 × 1024 px`)
-- **Clinical Rationale**: Implements physician credentials management, security settings, and notifications.
-- **Required Figma Frames (5 Frames)**: `1:3950` (Notification Center), `1:4281` (Profile), `1:4531` (Security), `1:4834` (Preferences), `1:5113` (Help Center).
+  - `1:5113`: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`)
 
 *(Note: The above prioritization is a recommendation only. Implementation must not begin without explicit user authorization).*
 
@@ -478,6 +480,8 @@ All future development, refactoring, and AI coding agent activities must strictl
 
 | Date | Author / Agent | Milestone / Activity | Core Changes & Reconciled Records |
 | :--- | :--- | :--- | :--- |
+| **2026-11-02** | Antigravity AI | **Milestone 12: Specialist Referrals & Consultations** | Implemented the 5 authoritative Figma production frames in Group C: `1:1535` (Referral Dashboard, `/referrals`), `1:1829` (Create Referral, `/referrals/new`), `1:2072` (Referral Details, `/referrals/:id`), `1:2343` (Incoming Referral Review, `/referrals/incoming/:id`), and `1:2559` (Referral Success, `/referrals/success`). Activated primary "Referrals" navigation item in the master application sidebar. Built complete end-to-end clinical referral management system with 5 bento summary metric cards, filter pills, multi-specialty routing, clinical necessity and bundled records authoring, comprehensive clinical dossier with 5-stage status timeline, inbound triage review with vitals grid and attachment preview, and centered dispatch confirmation. Passed 100% Playwright tests with browser screenshot artifacts captured and verified against Figma references. Passed strict TypeScript, ESLint (0 errors, 0 warnings), and production build. Increased candidate implementation tally to 40 of 46 frames (87.0%). Baseline commit preserved. |
+| **2026-11-02** | Antigravity AI | **Milestone 11: Surgical Encounter Completion** | Implemented 4 authoritative perioperative surgical frames in Group B (`1:14597`, `1:15031`, `1:15586`, `1:16047`), completing the terminal procedure lifecycle from clinical induction through QCA angiographic documentation, TR band hemostasis, physician attestation, and cryptographic ledger record sealing. Checkpoint commit `b3c7fcc` established. |
 | **2026-10-30** | Antigravity AI | **Prompt 30: Milestone 10 Implementation** | Implemented the 8-frame Clinical Handoff, Scheduling & Pre-Op Workflow (Path B): `1:9001` (Accepted Offer), `1:9573` (Clinical Clearance), `1:10206` (Schedule Slot), `1:10786` (Slot Review), `1:11274` (Procedure Scheduled), `1:11774` (Appointment Details), `1:12355` (Pre-Op Readiness), and `1:13596` (Day-of-Procedure Check-In). Seamlessly bridged Treatment Offer lifecycle to existing Cath Lab Safety Check-in (`1:14096`). Updated `TreatmentOfferStatusPage.tsx` to route to upstream progression while retaining developer direct testing link. Built and passed 10/10 automated Playwright end-to-end stages with visual screenshot artifacts. Passed strict TypeScript, ESLint (0 errors, 0 warnings), and production build. Baseline commit `83014b7` preserved. |
 | **2026-10-30** | Antigravity AI | **Prompt 29: Master Roadmap Reconciliation** | Completed rigorous consistency audit, mathematical reconciliation, and sequence verification. Reconciled all 50 canvas elements ($36 + 6 + 1 + 2 + 1 = 46$ production candidates + 2 drafts + 2 brand assets), resolving prior preliminary count contradictions. Traced complete 12-stage chronological Treatment-to-Procedure lifecycle (`1:7011` to `1:14096`) and clarified developer fast-path test navigation. Factually updated OPT-01 through OPT-08 and added OPT-09 (OCR cross-patient validation safety guardrail). Categorized all 65 registered application routes across 6 functional tiers. Re-evaluated multi-priority development sequences. Maintained 0 source code changes and baseline commit `83014b7`. |
 | **2026-10-30** | Antigravity AI | **Prompt 28: Master Roadmap Reconstruction** | Completely replaced `phases.md` with clean, comprehensive Master Development Roadmap. Reconciled complete 50-child Figma canvas inventory (48 frames + 2 standalone logos). Mapped 10 doctor workflows with Mermaid diagrams. Created 48-item dependency matrix and 24-item remaining production backlog. Migrated historical execution logs to `implementation.md`. Preserved working tree baseline at `83014b7`. |
