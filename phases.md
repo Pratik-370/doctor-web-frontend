@@ -93,8 +93,8 @@ Every canvas element has been audited, verified, and mapped below:
 | **39** | Referrals | Referral Clinical Details | `Doctor Web Portal - Referral Details` | `1:2072` | `/referrals/:id` (Registered) | `ReferralDetailsPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
 | **40** | Referrals | Incoming Referral Triage | `Doctor Web Portal - Incoming Referral Review` | `1:2343` | `/referrals/incoming/:id` (Registered) | `IncomingReferralReviewPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
 | **41** | Referrals | Referral Dispatched Confirmation | `Doctor Web Portal - Referral Success` | `1:2559` | `/referrals/success` (Registered) | `ReferralSuccessPage.tsx` | Workflow State / Dedicated View | Implemented — Awaiting Review |
-| **42** | Reports | Diagnostic Reports Dashboard | `Doctor Web Portal - Reports Dashboard` | `1:2590` | `/reports` (Registered) | Not Implemented | Dedicated Page | Missing |
-| **43** | Reports | Critical Diagnostic Alert Review | `Doctor Web Portal - Critical Report Review` | `1:3732` | Proposed (`/reports/critical/:id`) | Not Implemented | Dedicated Page | Missing |
+| **42** | Reports | Diagnostic Reports Dashboard | `Doctor Web Portal - Reports Dashboard` | `1:2590` | `/reports` (Registered) | `ReportsDashboardPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
+| **43** | Reports | Critical Diagnostic Alert Review | `Doctor Web Portal - Critical Report Review` | `1:3732` | `/reports/critical/:id` (Registered) | `CriticalReportReviewPage.tsx` | Dedicated Page | Implemented — Awaiting Review |
 | **44** | Notifications | Clinician Notification Center | `Notification Center` | `1:3950` | `/notifications` (Registered) | Not Implemented | Dedicated Page | Missing |
 | **45** | Profile & Settings | Clinician Professional Profile | `Doctor Web Portal - Professional Profile` | `1:4281` | `/settings` (Registered) | Not Implemented | Dedicated Page | Missing |
 | **46** | Profile & Settings | Account & Security Settings | `Doctor Web Portal - Account & Security Settings` | `1:4531` | `/settings/security` (Registered) | Not Implemented | Dedicated Page | Missing |
@@ -232,7 +232,7 @@ flowchart TD
     ReferralDash -->|"Select Inbound Referral"| TriageRef["Incoming Referral Review<br/>(1:2343)"]
     ReferralDash -->|"View Case Details"| RefDetails["Referral Clinical Details<br/>(1:2072, /referrals/:id)"]
     
-    ReportsDash["Reports Dashboard<br/>(1:2590, /reports)"] -->|"Urgent Flag Triage"| CritReview["Critical Report Review<br/>(1:3732)"]
+    ReportsDash["Reports Dashboard<br/>(1:2590, /reports)"] -->|"Urgent Flag Triage"| CritReview["Critical Report Review<br/>(1:3732, /reports/critical/:id)"]
     ReportsDash -->|"View Lab Analyte Curves"| Labs["Laboratory Report Viewer<br/>(1:2908, /records/labs)"]
     ReportsDash -->|"View DICOM Studies"| Imaging["Imaging Report Viewer<br/>(1:3203, /records/imaging)"]
 ```
@@ -283,7 +283,7 @@ The table below defines what precedes and follows every screen, establishing exp
 | **Incoming Referral** (`1:2343`) | Referrals Dashboard inbound tab | "Accept Referral", "Request Records", "Decline" | Patient Profile (`1:473`), Schedule | Referrals Dashboard (`1:1535`) | Sequence: TBD |
 | **Referral Success** (`1:2559`) | Create Referral submission | "Print Referral", "Back to Referrals" | Referrals Dashboard (`1:1535`) | Create Referral (`1:1829`) | Sequence: TBD |
 | **Reports Dashboard** (`1:2590`) | Sidebar "Reports" group | Unreviewed flags, critical lab rows | Critical Review (`1:3732`), Labs (`1:2908`) | Doctor Dashboard (`1:154`) | Date range filter |
-| **Critical Review** (`1:3732`) | Reports Dashboard critical badge | Panic alert acknowledgment, clinical sign-off | Reports Dashboard (`1:2590`) | Reports Dashboard (`1:2590`) | Deep-link to patient chart |
+| **Critical Review** (`1:3732`) | Reports Dashboard critical badge | Panic alert acknowledgment, clinical sign-off | Reports Dashboard (`1:2590`), Consultations, Referrals | Reports Dashboard (`1:2590`) | Deep-link to patient chart |
 | **Notification Center** (`1:3950`) | Header bell icon, Sidebar shortcut | Mark read, filter priority, alert card click | Target clinical route (Cath Lab, Labs, Offers) | Doctor Dashboard (`1:154`) | Notification settings |
 | **Professional Profile** (`1:4281`) | Doctor avatar thumbnail, Settings nav | Bio, credentials, hospital affiliations, "Save" | Settings Security (`1:4531`) | Doctor Dashboard (`1:154`) | Upload avatar |
 | **Security Settings** (`1:4531`) | Settings submenu, Doctor profile | Password update, MFA hardware keys, sessions | Professional Profile (`1:4281`) | Doctor Dashboard (`1:154`) | Session revocation |
@@ -296,27 +296,29 @@ The table below defines what precedes and follows every screen, establishing exp
 
 ### 5.1 Status Classification Summary
 Across the **46 production candidates** (45 visible + 1 hidden frame):
-- **Accepted (Visually & Functionally Validated)**: **8 frames** (`1:154`, `1:6657`, `1:745`, `1:473`, `1:6023`, `1:5719`, `1:6396`, `1:2908`)
-- **Implemented — Awaiting Review**: **7 frames** (`1:1167`, `1:1088`, `1:1325`, `1:1513`, `1:7538`, `1:7986`, `1:3203`)
-- **Implemented — Pending UX Optimization**: **3 frames** (`1:5316` Financing Hub, `1:7011` Treatment Offer Create, `1:14096` Cath Lab Safety Time-Out)
-- **Partially Implemented (UI Shell Active; Backend Deferred)**: **2 frames** (`1:2` Login, `1:79` OTP)
-- **Duplicate — Reuse Existing Component**: **2 frames** (`1:882` -> reuse `1:3203`, `1:8548` -> reuse `1:7986`)
-- **Missing Production Frames**: **24 frames** (Detailed in Section 6 below)
+- **Implemented and accepted**: **8 frames** (`1:154`, `1:6657`, `1:745`, `1:473`, `1:6023`, `1:5719`, `1:6396`, `1:2908`)
+- **Implemented and awaiting review**: **26 frames** (Milestones 7, 9, 10, 11, 12, 13, and Radiology: `1:1167`, `1:1088`, `1:1325`, `1:1513`, `1:7538`, `1:7986`, `1:3203`, `1:9001`, `1:9573`, `1:10206`, `1:10786`, `1:11274`, `1:11774`, `1:12355`, `1:13596`, `1:14597`, `1:15031`, `1:15586`, `1:16047`, `1:1535`, `1:1829`, `1:2072`, `1:2343`, `1:2559`, `1:2590`, `1:3732`)
+- **Implemented but awaiting UX optimization**: **3 frames** (`1:5316` Financing Hub, `1:7011` Treatment Offer Create, `1:14096` Cath Lab Safety Time-Out)
+- **Partially implemented (UI Shell Active; Backend Deferred)**: **2 frames** (`1:2` Login, `1:79` OTP)
+- **Reused duplicate**: **2 frames** (`1:882` -> reuse `1:3203`, `1:8548` -> reuse `1:7986`)
+- **Not yet implemented**: **5 frames** (Detailed in Group E below: `1:3950`, `1:4281`, `1:4531`, `1:4834`, and `1:5113`)
 - **Exploratory Drafts (Excluded)**: **2 frames** (`1:12893`, `1:13265`)
 - **Standalone Brand Assets (Exported)**: **2 assets** (`1:153`, `1:472`)
 
 $$\begin{aligned}
-\text{Total Production Candidates} &= 8 + 7 + 3 + 2 + 2 + 24 = \mathbf{46} \\
+\text{Total Production Candidates} &= 8 + 26 + 3 + 2 + 2 + 5 = \mathbf{46} \\
 \text{Total Canvas Elements} &= 46 + 2 \text{ (Drafts)} + 2 \text{ (Assets)} = \mathbf{50}
 \end{aligned}$$
 
 ### 5.2 Implementation Progress Metric
-$$\begin{aligned}
-\text{Total Unique Production Target Frames} &= 46 - 2 \text{ (Duplicates)} = \mathbf{44} \\
-\text{Fully Implemented Workstations} &= 8 \text{ (Accepted)} + 7 \text{ (Awaiting Review)} + 3 \text{ (Pending UX Opt)} = \mathbf{18} \\
-\text{Partially Implemented UI Shells} &= \mathbf{2} \text{ (Auth Login \& OTP)} \\
-\text{Production Scope Complete / Under Review} &= \frac{18 + 2}{44} = \frac{20}{44} \approx \mathbf{45.45\%}
-\end{aligned}$$
+Across the **44 unique production target frames** (excluding 2 duplicates):
+- **Implemented and accepted**: **8 screens** (18.18%)
+- **Implemented and awaiting review**: **26 screens** (59.09%)
+- **Implemented but awaiting UX optimization**: **3 screens** (6.82%)
+- **Partially implemented UI shells**: **2 screens** (4.55%)
+- **Total unique screens implemented / under review**: **39 of 44 screens** ($\frac{39}{44} \approx \mathbf{88.64\%}$) *(Note: This represents 39 unique screens implemented across accepted, awaiting review, pending optimization, and partial states; it is not 39 fully accepted screens).*
+- **Not yet implemented**: **5 of 44 screens** ($\frac{5}{44} \approx \mathbf{11.36\%}$, Group E)
+- **Total candidate frame implementation**: **41 of 46 candidates** ($\frac{41}{46} \approx \mathbf{89.13\%}$)
 
 ### 5.3 Registered Application Routes Breakdown
 A comprehensive audit of `src/routes/index.tsx` confirms exactly **65 path definitions**, categorized into the following functional tiers:
@@ -335,7 +337,7 @@ A comprehensive audit of `src/routes/index.tsx` confirms exactly **65 path defin
 
 ## 6. Remaining Production Development Plan
 
-Following the completion of Milestone 10 (Clinical Handoff, Scheduling & Pre-Op Workflow - Path B), **8 frames** across Groups A and B have been implemented and verified. The **16 true remaining production pages** are categorized below by clinical module:
+Following the completion of Milestones 10, 11, 12, and 13, **41 of 46 production candidate frames (89.1%)** have been implemented and verified. The remaining production scope consists exclusively of **Group E (5 frames)**:
 
 ### Group A: Extended Treatment Offer, Procedure Scheduling & Clinical Handoff (COMPLETED — 6 Frames)
 - **Node `1:9001`**: `Care ID Doctor - Accepted Treatment Offer` (`1280 × 2111.88 px`) — **Implemented** (`TreatmentOfferAcceptedPage.tsx`)
@@ -345,7 +347,7 @@ Following the completion of Milestone 10 (Clinical Handoff, Scheduling & Pre-Op 
 - **Node `1:11274`**: `Care ID Doctor - Procedure Scheduled Successfully` (`1280 × 2393 px`) — **Implemented** (`ProcedureSchedulingPage.tsx`, Confirmed Mode)
 - **Node `1:11774`**: `Care ID Doctor - Scheduled Procedure & Appointment Details` (`1280 × 2360.75 px`) — **Implemented** (`AppointmentDetailsPage.tsx`)
 
-### Group B: Surgical Pre-Op, Intra-Procedure & Encounter Completion (6/6 Completed — Milestone 11)
+### Group B: Surgical Pre-Op, Intra-Procedure & Encounter Completion (COMPLETED — 6 Frames)
 - **Node `1:12355`**: `Care ID Doctor - Pre-Procedure Readiness Checklist` (`1280 × 3369 px`) — **Implemented** (`PreOpReadinessPage.tsx`)
 - **Node `1:13596`**: `Care ID Doctor - Day-of-Procedure Check-In` (`1280 × 1746.5 px`) — **Implemented** (`DayOfCheckinPage.tsx`)
 - **Node `1:14597`**: `Care ID Doctor - Start Clinical Encounter` (`1280 × 1584.5 px`) — **Implemented** (`StartClinicalEncounterPage.tsx`, `/treatment-offers/:id/encounter/start`)
@@ -353,23 +355,23 @@ Following the completion of Milestone 10 (Clinical Handoff, Scheduling & Pre-Op 
 - **Node `1:15586`**: `Care ID Doctor - Post-Procedure Summary` (`1280 × 1922.5 px`) — **Implemented** (`PostProcedureSummaryPage.tsx`, `/treatment-offers/:id/post-op`)
 - **Node `1:16047`**: `Care ID Doctor - Encounter Completed` (`1280 × 1696.75 px`, Hidden on Canvas) — **Implemented** (`EncounterCompletedPage.tsx`, `/treatment-offers/:id/completed`)
 
-### Group C: Specialist Referrals & Consultations (5/5 Completed — Milestone 12)
+### Group C: Specialist Referrals & Consultations (COMPLETED — 5 Frames)
 1. **Node `1:1535`**: `Doctor Web Portal - Referral Dashboard` (`1280 × 1082 px`) — **Implemented** (`ReferralDashboardPage.tsx`, `/referrals`)
 2. **Node `1:1829`**: `Doctor Web Portal - Create Referral` (`1280 × 1024 px`) — **Implemented** (`CreateReferralPage.tsx`, `/referrals/new`)
 3. **Node `1:2072`**: `Doctor Web Portal - Referral Details` (`1280 × 1178 px`) — **Implemented** (`ReferralDetailsPage.tsx`, `/referrals/:id`)
 4. **Node `1:2343`**: `Doctor Web Portal - Incoming Referral Review` (`1280 × 1024 px`) — **Implemented** (`IncomingReferralReviewPage.tsx`, `/referrals/incoming/:id`)
 5. **Node `1:2559`**: `Doctor Web Portal - Referral Success` (`1280 × 1024 px`) — **Implemented** (`ReferralSuccessPage.tsx`, `/referrals/success`)
 
-### Group D: Diagnostic Reports & Critical Triage (2 Frames Remaining — Next Up: Milestone 13)
-6. **Node `1:2590`**: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — Master diagnostic reports dashboard across Pathology, Labs, and Imaging.
-7. **Node `1:3732`**: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — High-priority diagnostic panic alerts requiring urgent clinician sign-off.
+### Group D: Diagnostic Reports & Critical Triage (COMPLETED — 2 Frames in Milestone 13)
+1. **Node `1:2590`**: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — **Implemented** (`ReportsDashboardPage.tsx`, `/reports`)
+2. **Node `1:3732`**: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — **Implemented** (`CriticalReportReviewPage.tsx`, `/reports/critical/:id`)
 
-### Group E: Communication & Settings (4 Frames Remaining)
-8. **Node `1:3950`**: `Notification Center` (`1348 × 1082 px`) — Provider alert center for time-outs, critical lab values, and referral updates.
-9. **Node `1:4281`**: `Doctor Web Portal - Professional Profile` (`1280 × 1080 px`) — Physician credentials, hospital privileges, digital signature certificate.
-10. **Node `1:4531`**: `Doctor Web Portal - Account & Security Settings` (`1280 × 1024 px`) — Security credentials, hardware 2FA keys, active sessions.
-11. **Node `1:4834`**: `Doctor Web Portal - Notification Preferences` (`1280 × 1024 px`) — Granular alert dispatch controls across SMS, email, and EHR push.
-16. **Node `1:5113`**: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`) — Clinical IT support desk, compliance hotline, FAQs.
+### Group E: Communication & Settings (5 Frames Remaining — Next Up: Milestone 14)
+1. **Node `1:3950`**: `Notification Center` (`1348 × 1082 px`) — Provider alert center for time-outs, critical lab values, and referral updates.
+2. **Node `1:4281`**: `Doctor Web Portal - Professional Profile` (`1280 × 1080 px`) — Physician credentials, hospital privileges, digital signature certificate.
+3. **Node `1:4531`**: `Doctor Web Portal - Account & Security Settings` (`1280 × 1024 px`) — Security credentials, hardware 2FA keys, active sessions.
+4. **Node `1:4834`**: `Doctor Web Portal - Notification Preferences` (`1280 × 1024 px`) — Granular alert dispatch controls across SMS, email, and EHR push.
+5. **Node `1:5113`**: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`) — Clinical IT support desk, compliance hotline, FAQs. *(Reconciled: un-implemented production candidate assigned to Milestone 14)*
 
 ---
 
@@ -435,21 +437,22 @@ Based on clinical workflow continuity, patient data dependencies, and completed 
 - **Verification**: Complete multi-step referral management and clinical consult lifecycle validated via Playwright end-to-end automation with browser screenshots captured for all 5 views. Zero TypeScript errors, zero lint warnings, clean Vite production build.
 - **Progress Milestone**: 40 of 46 production candidate frames (87.0%) implemented.
 
-### Priority 1 (Recommended Next Step): Milestone 13 — Diagnostic Reports & Critical Alert Review
-- **Clinical Rationale**: Establishes high-priority clinical panic triage for troponin elevations and acute diagnostic findings, replacing `<PlaceholderPage title="Clinical Reports" />`.
-- **Required Figma Frames (2 Frames in Group D)**:
-  - `1:2590`: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — Master diagnostic reports dashboard across Pathology, Labs, and Imaging.
-  - `1:3732`: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — High-priority diagnostic panic alerts requiring urgent clinician sign-off.
-- **Dependencies**: Integrates with existing Lab Viewer (`1:2908`) and Radiology Viewer (`1:3203`).
+### Milestone 13 (Completed): Diagnostic Reports & Critical Alert Review
+- **Status**: **COMPLETED & VERIFIED** (Milestone 13)
+- **Delivered Frames (2 Frames in Group D)**:
+  - `1:2590`: `Doctor Web Portal - Reports Dashboard` (`1280 × 1024 px`) — `ReportsDashboardPage.tsx` (`/reports`)
+  - `1:3732`: `Doctor Web Portal - Critical Report Review` (`1280 × 1024 px`) — `CriticalReportReviewPage.tsx` (`/reports/critical/:id`)
+- **Verification**: Complete multi-domain diagnostic reports dashboard and STAT priority critical findings review workstation validated via Playwright end-to-end automation with browser screenshots captured and verified against Figma references. Zero TypeScript errors, zero lint warnings, clean Vite production build.
+- **Progress Milestone**: 41 of 46 production candidate frames (89.1%) implemented. Exactly 5 frames remaining in Group E.
 
-### Priority 2: Milestone 14 — Clinician Profile, Account, Notifications & Help Center
+### Priority 1 (Recommended Next Step): Milestone 14 — Clinician Profile, Account, Notifications & Help Center
 - **Clinical Rationale**: Completes provider profile, digital credentials, 2FA hardware keys, alert routing, and IT support center.
 - **Required Figma Frames (5 Frames in Group E)**:
   - `1:3950`: `Notification Center` (`1348 × 1082 px`)
   - `1:4281`: `Doctor Web Portal - Professional Profile` (`1280 × 1080 px`)
   - `1:4531`: `Doctor Web Portal - Account & Security Settings` (`1280 × 1024 px`)
   - `1:4834`: `Doctor Web Portal - Notification Preferences` (`1280 × 1024 px`)
-  - `1:5113`: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`)
+  - `1:5113`: `Doctor Web Portal - Support & Help Center` (`1280 × 1024 px`) *(Reconciled: un-implemented production candidate assigned to Milestone 14)*
 
 *(Note: The above prioritization is a recommendation only. Implementation must not begin without explicit user authorization).*
 
@@ -480,6 +483,7 @@ All future development, refactoring, and AI coding agent activities must strictl
 
 | Date | Author / Agent | Milestone / Activity | Core Changes & Reconciled Records |
 | :--- | :--- | :--- | :--- |
+| **2026-11-02** | Antigravity AI | **Milestone 13: Diagnostic Reports & Critical Alert Review** | Implemented the 2 authoritative Figma production frames in Group D: `1:2590` (Reports Dashboard, `/reports`) and `1:3732` (Critical Report Review, `/reports/critical/:id`). Replaced clinical reports placeholder with full reports management system featuring 4 bento summary metric cards, multi-type filtering, status pills, dynamic report table with category badges, and pagination. Built STAT priority critical findings review workstation with abnormal lab alert banner, patient clinical summary, dual critical analyte cards (Potassium 6.2 mEq/L, Creatinine 2.8 mg/dL) with elevation glyphs, narrative clinical summary, and urgent follow-up workflow card with consultation and referral CTAs. Verified interactive alert acknowledgment and not-found fallbacks. Passed 100% Playwright tests with browser screenshot artifacts captured and verified against Figma references. Passed strict TypeScript, ESLint (0 errors, 0 warnings), and production build. Reconciled inventory to 41 of 46 candidate frames (89.13%) implemented, leaving exactly 5 frames in Group E. Baseline commit preserved. |
 | **2026-11-02** | Antigravity AI | **Milestone 12: Specialist Referrals & Consultations** | Implemented the 5 authoritative Figma production frames in Group C: `1:1535` (Referral Dashboard, `/referrals`), `1:1829` (Create Referral, `/referrals/new`), `1:2072` (Referral Details, `/referrals/:id`), `1:2343` (Incoming Referral Review, `/referrals/incoming/:id`), and `1:2559` (Referral Success, `/referrals/success`). Activated primary "Referrals" navigation item in the master application sidebar. Built complete end-to-end clinical referral management system with 5 bento summary metric cards, filter pills, multi-specialty routing, clinical necessity and bundled records authoring, comprehensive clinical dossier with 5-stage status timeline, inbound triage review with vitals grid and attachment preview, and centered dispatch confirmation. Passed 100% Playwright tests with browser screenshot artifacts captured and verified against Figma references. Passed strict TypeScript, ESLint (0 errors, 0 warnings), and production build. Increased candidate implementation tally to 40 of 46 frames (87.0%). Baseline commit preserved. |
 | **2026-11-02** | Antigravity AI | **Milestone 11: Surgical Encounter Completion** | Implemented 4 authoritative perioperative surgical frames in Group B (`1:14597`, `1:15031`, `1:15586`, `1:16047`), completing the terminal procedure lifecycle from clinical induction through QCA angiographic documentation, TR band hemostasis, physician attestation, and cryptographic ledger record sealing. Checkpoint commit `b3c7fcc` established. |
 | **2026-10-30** | Antigravity AI | **Prompt 30: Milestone 10 Implementation** | Implemented the 8-frame Clinical Handoff, Scheduling & Pre-Op Workflow (Path B): `1:9001` (Accepted Offer), `1:9573` (Clinical Clearance), `1:10206` (Schedule Slot), `1:10786` (Slot Review), `1:11274` (Procedure Scheduled), `1:11774` (Appointment Details), `1:12355` (Pre-Op Readiness), and `1:13596` (Day-of-Procedure Check-In). Seamlessly bridged Treatment Offer lifecycle to existing Cath Lab Safety Check-in (`1:14096`). Updated `TreatmentOfferStatusPage.tsx` to route to upstream progression while retaining developer direct testing link. Built and passed 10/10 automated Playwright end-to-end stages with visual screenshot artifacts. Passed strict TypeScript, ESLint (0 errors, 0 warnings), and production build. Baseline commit `83014b7` preserved. |

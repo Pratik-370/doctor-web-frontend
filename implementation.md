@@ -36,7 +36,10 @@
 | **Milestone 8** | **Intra-Procedure Cath Lab Safety Check-in** | Cath Lab clinical time-out (`1:14096`), 6 multidisciplinary safety safeguards, severe allergy precautions, dual biometrics, telemetry sparkline, and cryptographic handshake ratification. | **COMPLETED** |
 | **Milestone 9** | **OCR Medical Document Processing Pipeline** | OCR upload initial state (`1:1167`), extraction simulation (`1:1088`), 60/40 split review & verification (`1:1325`), and record saved confirmation (`1:1513`). | **COMPLETED** |
 | **Milestone 10** | **Clinical Handoff, Scheduling & Pre-Op Workflow (Path B)** | Upstream clinical journey across 8 Figma frames (`1:9001`–`1:13596`) connecting Offer Status to Cath Lab Safety Check-in. | **COMPLETED** |
-| **Milestone 11** | **Surgical Encounter Completion & Terminal Procedure Lifecycle (Path A)** | Downstream intra-op telemetry and encounter completion (`1:14597`, `1:15031`, `1:15586`, `1:16047`). | Planned |
+| **Milestone 11** | **Surgical Encounter Completion & Terminal Procedure Lifecycle (Path A)** | Downstream intra-op telemetry and encounter completion (`1:14597`, `1:15031`, `1:15586`, `1:16047`). | **COMPLETED** |
+| **Milestone 12** | **Specialist Referrals & Consultations** | Outgoing & incoming referral workflows, specialist dossier, 5 bento metrics, and clinical attachments (`1:1535`, `1:1829`, `1:2072`, `1:2343`, `1:2559`). | **COMPLETED** |
+| **Milestone 13** | **Diagnostic Reports & Critical Alert Review** | Multi-domain reports dashboard, 4 bento metric cards, and STAT priority critical alert review workstation (`1:2590`, `1:3732`). | **COMPLETED** |
+| **Milestone 14** | **Clinician Profile, Account, Notifications & Help Center** | Communication, notification center, provider profile, security settings, notification preferences, and support help desk (`1:3950`, `1:4281`, `1:4531`, `1:4834`, `1:5113`). | Planned |
 
 ---
 
@@ -405,6 +408,82 @@
    - ESLint: 0 errors, 0 warnings.
    - Production `vite build`: Clean compile in 6.08s.
    - Working Tree Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review.
+
+---
+
+## 4.10 Milestone 13: Diagnostic Reports & Critical Alert Review (Group D)
+
+1. **Milestone Objectives**:
+   - Implement the complete multi-domain diagnostic reports dashboard and STAT priority critical findings review workstation across the 2 authoritative Figma production frames in Group D:
+     - `1:2590`: `Doctor Web Portal - Reports Dashboard` (1280 × 1024 px) -> `/reports`
+     - `1:3732`: `Doctor Web Portal - Critical Report Review` (1280 × 1024 px) -> `/reports/critical/:id`
+   - Reconcile Support Center (`1:5113`): Formally confirmed that `1:5113` belongs to Milestone 14 (Group E, `/settings/support`), ensuring Group D strictly contains 2 frames and post-Milestone 13 remaining scope is exactly 5 frames in Group E.
+   - Replace generic `<PlaceholderPage title="Clinical Reports" />` in `src/routes/index.tsx` with dedicated clinical workstation components.
+   - Maintain all core invariants: authenticated clinician profile docked at sidebar top, "Patient Details" navigation label, canonical CareID CTA gradient (`bg-gradient-to-b from-[#a44cff] to-[#5b14b8]`), and strict local Git working tree discipline without auto-commits.
+
+2. **Architectural Implementation**:
+   - **Data Layer & Types (`src/pages/reports/types.ts`)**:
+     - Defined `ReportType` (`'CBC Panel' | 'Comprehensive Metabolic Panel (CMP)' | 'MRI Brain & Cervical Spine' | 'Consultation Note' | 'Cardiac Biomarkers (Troponin I)' | '12-Lead Electrocardiogram (ECG)' | 'Chest X-Ray AP/Lateral'`), `ReportStatus` (`'Verified' | 'Pending' | 'In Review' | 'Critical Alert'`), `ReportPriority` (`'STAT' | 'Urgent' | 'Routine'`), `CriticalFindingValue`, and `ReportRecord`.
+     - Provided realistic clinical fixtures (`DEFAULT_REPORTS_DATA`) including James Robertson (`PT-84920`, CMP, STAT Priority with critical Potassium 6.2 and Creatinine 2.8 matching Figma `1:3732`), John Smith (`HV-8842-A`, CBC Panel), Maria Rodriguez (`HV-9102-C`, MRI Scan), David Lee (`HV-3321-B`, Cardiology Consult Note), and Eleanor Vance (`HV-884-291`, Cardiac Biomarkers).
+   - **Router Registration (`src/routes/index.tsx`)**:
+     - Replaced placeholder entries under `// 6. Clinical Reports & Analytics` with live workstation components:
+       - `/reports` -> `<ReportsDashboardPage />`
+       - `/reports/critical/:id` (and `/reports/critical`) -> `<CriticalReportReviewPage />`
+   - **Navigation & Breadcrumbs Integration (`src/components/layout/Breadcrumbs.tsx`)**:
+     - Added `Dashboard > Reports` trail for `/reports`.
+     - Cleanly suppressed default breadcrumbs for `/reports/critical` to allow the workstation's own navigation line (`← Back to Reports Dashboard`) to render without visual conflict.
+
+3. **Interactive Clinical Workflows**:
+   - **Diagnostic Reports Dashboard (`1:2590`)**:
+     - Header: `Reports Dashboard` title, subtitle `Manage and review all patient reports across clinical domains.`, and canonical `+ Upload Report` button (`#20005a`).
+     - 4 Bento summary metric cards: Today's Reports (42 with `+12% vs yesterday` pill), Pending Reviews (18 with red alert badge), Critical Results (3 with alert triangle icon and filter shortcut), and Recently Uploaded (156 with cloud upload icon).
+     - Filter bar: Search input `Search Patient or HV ID...`, Report Type dropdown selector, Status filter pills (`All`, `Verified`, `Pending` with active red indicator dot), and Date filter `Last 7 Days`.
+     - Multi-column clinical table: Columns for `PATIENT`, `HV ID`, `REPORT TYPE` (with domain icons: Activity, Brain, FileText, HeartPulse, Beaker), `HOSPITAL`, `CREATED DATE`, `STATUS` (`Pending` red dot, `Verified` teal check, `Critical Alert` red pulsing badge), and `ACTIONS` (eye icon navigating to `/reports/critical/:id`).
+     - Pagination footer: `Showing 1 to 10 of 42 entries` with page navigation `< 1 2 3 >`.
+   - **Critical Diagnostic Alert Review Workstation (`1:3732`)**:
+     - Top critical findings alert banner: Red warning triangle icon, `Critical Findings Alert: Immediate Review Required` title, `Abnormal lab results detected in recent panel for Patient ID: PT-84920.` subtitle, and `Received: 10 mins ago` timestamp.
+     - Left Column (~35% / 4 cols): `Patient Summary` card featuring patient photo avatar, James Robertson, `68 yrs • Male • MRN: 994-32A`, two metric blocks (`Primary Dx: Hypertension, T2DM`, `Last Visit: 12 Days Ago`), and `Open Patient Profile` button (navigates to `/patients/PT-84920` resolving matching James Robertson profile).
+     - Right Column (~65% / 8 cols):
+       - Comprehensive Metabolic Panel (CMP) header card with laboratory flask icon, burgundy title, and `STAT PRIORITY` badge.
+       - Dual critical analyte cards:
+         - Potassium (K): `6.2 mEq/L` with elevation badge `Ref: 3.5 – 5.1 (High)` and double chevron up glyph `︽`.
+         - Creatinine: `2.8 mg/dL` with elevation badge `Ref: 0.7 – 1.3 (High)` and double chevron up glyph `︽`.
+       - Report Narrative Summary container: Document icon and comprehensive clinical interpretation text (`Marked interval increase in serum creatinine and hyperkalemia...`).
+     - Full-Width Bottom Card: `Required Follow-up Workflow` with teal accent border `border-t-4 border-t-teal-600`, actionable guidance (`Review current medication list (specifically ACEi/ARBs) and initiate urgent contact with patient.`), and 2 interactive CTAs:
+       - `Start Consultation` (`bg-teal-700`): Opens an interactive, clearly labeled simulated telehealth consultation modal with honest demonstration disclaimers, patient contact details (+1 555-342-8891), call duration timer, and End Call action.
+       - `Create Referral (Nephro)` (`bg-white border text-slate-800`): Transfers full patient context (`James Robertson`, `PT-84920`, `MRN: 994-32A`, `Nephrology`, `Urgent`) via React Router `location.state` to `/referrals/new`.
+     - Patient Profile Multi-Patient Lookup: `PatientProfilePage.tsx` upgraded with patient dictionary resolving both canonical Eleanor Vance (`HV-884-291`) and James Robertson (`PT-84920`, `MRN: 994-32A`), with a truthful unavailable profile view for unrecognized identifiers.
+     - Standalone Referral Behavior Preservation: `/referrals/new` preserves canonical Marcus Johnson (`HV-9284-771`) when accessed standalone.
+     - Interactive features: Alert acknowledgment action with audit confirmation toast and acknowledged pill status, plus robust not-found fallback view.
+
+4. **Automated Verification & Quality Gates**:
+   - Automated Playwright end-to-end verification script (`scratch/test_milestone13_reports.js`): All 7 verification steps and identity checks passed with 100% success rate:
+     1. James Robertson verified on critical report with MRN `994-32A`.
+     2. Open Patient Profile routes to `/patients/PT-84920`, displaying James Robertson's profile and strictly verifying Eleanor Vance is NOT displayed.
+     3. Invalid patient route (`/patients/UNKNOWN-INVALID-ID`) displays truthful `Patient Profile Not Found` error.
+     4. Create Referral transfers patient context, pre-populating James Robertson (`PT-84920`, MRN `994-32A`, Nephrology, Urgent).
+     5. Standalone `/referrals/new` retains canonical default Marcus Johnson (`HV-9284–771`).
+     6. Start Consultation opens simulated modal with truthful demonstration notice, live duration timer, and clean closure.
+     7. Invalid report reference (`/reports/critical/INVALID-REPORT-XYZ`) displays truthful `Diagnostic Report Not Found` state.
+   - Measurable Visual QA at 1280px Desktop Viewport:
+     - Alert Banner: `w=976px, h=72px` (Figma: `w=976px, h=84px`)
+     - Patient Summary Card: `w=312px, h=433px` (Figma: `w=309.33px, h=347px`)
+     - CMP Panel: `w=644px, h=399px` (Figma: `w=642.67px, h=399px` — exact height match, width within 1.3px)
+     - Potassium Card: `w=289px, h=134px` (Figma: `w=292.33px, h=130px`)
+     - Creatinine Card: `w=289px, h=134px` (Figma: `w=292.34px, h=130px`)
+     - Follow-up Workflow Card: `w=976px, h=120px` (Figma: `w=976px, h=124px` — exact width match, height within 4px)
+   - Visual comparison screenshots captured and verified against authoritative Figma references:
+     - `1_2590_browser_reports_dashboard.png` vs `1_2590_reports_dashboard.png`
+     - `1_3732_browser_critical_report_review.png` vs `1_3732_critical_report_review.png`
+   - Non-regression test suites:
+     - Milestone 9 OCR Pipeline (`test_prompt27_ocr_pipeline.js`): 100% pass rate across all 8 stages including 10 core routes.
+     - Milestone 12 Referrals (`test_milestone12_referrals.js`): 100% pass rate across all 5 views.
+     - Milestone 11 Surgical Encounter (`test_prompt31_encounter_lifecycle.js`): 100% pass rate across all 6 stages.
+     - Milestone 10 Clinical Handoff & Scheduling (`test_prompt30_scheduling_workflow.js`): 100% pass rate across all 10 stages.
+   - TypeScript `tsc -b --noEmit`: 0 errors.
+   - ESLint: 0 errors, 0 warnings.
+   - Production `vite build`: Clean compile in 5.15s (1,657 modules).
+   - Working Tree Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review. Post-Milestone 13 progress stands at 41 of 46 production candidates (89.13%).
 
 ---
 

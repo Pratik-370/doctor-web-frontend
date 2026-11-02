@@ -16,15 +16,49 @@ import {
   User,
 } from 'lucide-react';
 import patientAvatarHero from '@/assets/avatars/patient-avatar-hero.png';
+import patientAvatarMale from '@/assets/avatars/patient-avatar-male.png';
 
-export const PatientProfilePage: React.FC = () => {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+interface PatientProfileData {
+  name: string;
+  healthVaultId: string;
+  mrn?: string;
+  status: string;
+  ageGenderDob: string;
+  bloodGroup: string;
+  primaryPhysician: string;
+  insuranceStatus: string;
+  allergies: string;
+  chronicConditions: string;
+  highRisk: string;
+  avatarSrc: string;
+  vitals: {
+    bp: string;
+    bpUnit: string;
+    hr: string;
+    hrUnit: string;
+    temp: string;
+    tempUnit: string;
+    spo2: string;
+    spo2Unit: string;
+    resp: string;
+    respUnit: string;
+    bmi: string;
+    lastUpdated: string;
+  };
+  quickFacts: {
+    emergencyContact: string;
+    emergencyPhone: string;
+    nurse: string;
+    hospital: string;
+  };
+}
 
-  // Demographic mock dataset matching Figma node 1:473
-  const patient = {
+const PATIENTS_MAP: Record<string, PatientProfileData> = {
+  // Eleanor Vance (Canonical Figma 1:473)
+  'HV-884-291': {
     name: 'Eleanor Vance',
-    healthVaultId: id && id !== '1' ? id : 'HV-884-291',
+    healthVaultId: 'HV-884-291',
+    mrn: 'HV-884-291',
     status: 'Stable',
     ageGenderDob: '45 • F • Oct 24, 1978',
     bloodGroup: 'O+',
@@ -33,6 +67,7 @@ export const PatientProfilePage: React.FC = () => {
     allergies: 'Penicillin, Peanuts (Severe)',
     chronicConditions: 'Hypertension, Type 2 Diabetes',
     highRisk: 'Elevated cholesterol history',
+    avatarSrc: patientAvatarHero,
     vitals: {
       bp: '120/80',
       bpUnit: 'mmHg',
@@ -53,7 +88,76 @@ export const PatientProfilePage: React.FC = () => {
       nurse: 'Sarah Jenkins, RN',
       hospital: 'St. Jude Medical Center',
     },
-  };
+  },
+  // James Robertson (Authoritative Critical Report 1:3732)
+  'PT-84920': {
+    name: 'James Robertson',
+    healthVaultId: 'PT-84920',
+    mrn: '994-32A',
+    status: 'Attention Required',
+    ageGenderDob: '68 • M • Jul 14, 1955',
+    bloodGroup: 'A+',
+    primaryPhysician: 'Dr. Clinical',
+    insuranceStatus: 'Active',
+    allergies: 'Penicillin (Severe), Sulfa Drugs',
+    chronicConditions: 'Hypertension, Type 2 Diabetes Mellitus',
+    highRisk: 'Hyperkalemia (K+ 6.2 mEq/L), Acute Kidney Injury (Cr 2.8 mg/dL)',
+    avatarSrc: patientAvatarMale,
+    vitals: {
+      bp: '142/88',
+      bpUnit: 'mmHg',
+      hr: '76',
+      hrUnit: 'bpm',
+      temp: '98.4',
+      tempUnit: '°F',
+      spo2: '97',
+      spo2Unit: '%',
+      resp: '18',
+      respUnit: 'bpm',
+      bmi: '27.1',
+      lastUpdated: '10 mins ago',
+    },
+    quickFacts: {
+      emergencyContact: 'Martha Robertson (Spouse)',
+      emergencyPhone: '+1 (555) 342-8891',
+      nurse: 'Sarah Jenkins, RN',
+      hospital: 'General Hospital - Central Labs',
+    },
+  },
+};
+
+// Aliases for route lookups
+PATIENTS_MAP['1'] = PATIENTS_MAP['HV-884-291'];
+PATIENTS_MAP['994-32A'] = PATIENTS_MAP['PT-84920'];
+
+export const PatientProfilePage: React.FC = () => {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  // Resolve matching patient record
+  const patient = id ? PATIENTS_MAP[id] : PATIENTS_MAP['HV-884-291'];
+
+  // If patient ID requested is invalid, render truthful not-found state
+  if (!patient) {
+    return (
+      <div className="w-full max-w-xl mx-auto py-16 text-center space-y-4">
+        <div className="size-16 rounded-full bg-slate-100 text-slate-500 mx-auto flex items-center justify-center">
+          <User className="size-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">Patient Profile Not Found</h2>
+        <p className="text-xs text-slate-500">
+          No patient record found matching identifier <span className="font-mono font-semibold text-slate-700">{id}</span> in the clinical registry.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate('/patients')}
+          className="px-5 py-2.5 rounded-xl bg-[#28006d] text-white text-xs font-semibold hover:bg-[#3f1d8b] transition-colors"
+        >
+          Return to Patient Details
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6" data-node-id="1:473">
@@ -73,7 +177,7 @@ export const PatientProfilePage: React.FC = () => {
             <div className="relative shrink-0">
               <div className="size-24 rounded-full border-4 border-[#f8f9fa] shadow-sm overflow-hidden bg-slate-100">
                 <img
-                  src={patientAvatarHero}
+                  src={patient.avatarSrc}
                   alt={patient.name}
                   className="size-full object-cover"
                 />
@@ -94,10 +198,15 @@ export const PatientProfilePage: React.FC = () => {
                   <h1 className="text-2xl sm:text-[32px] font-semibold text-[#191c1d] leading-tight">
                     {patient.name}
                   </h1>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
                     <span className="bg-[#3f1d8b]/20 text-[#28006d] text-sm font-medium tracking-[0.1px] rounded px-2 py-0.5">
                       {patient.healthVaultId}
                     </span>
+                    {patient.mrn && patient.mrn !== patient.healthVaultId && (
+                      <span className="bg-slate-100 text-slate-700 text-xs font-semibold rounded px-2 py-0.5">
+                        MRN: {patient.mrn}
+                      </span>
+                    )}
                     <span className="bg-[#76f1ff]/30 text-[#006971] text-xs font-medium tracking-[0.5px] rounded-full px-2 py-0.5 flex items-center gap-1">
                       <span className="size-1.5 rounded-full bg-[#006971]" />
                       <span>{patient.status}</span>

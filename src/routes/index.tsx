@@ -35,6 +35,8 @@ import { CreateReferralPage } from '@/pages/referrals/CreateReferralPage';
 import { ReferralDetailsPage } from '@/pages/referrals/ReferralDetailsPage';
 import { IncomingReferralReviewPage } from '@/pages/referrals/IncomingReferralReviewPage';
 import { ReferralSuccessPage } from '@/pages/referrals/ReferralSuccessPage';
+import { ReportsDashboardPage } from '@/pages/reports/ReportsDashboardPage';
+import { CriticalReportReviewPage } from '@/pages/reports/CriticalReportReviewPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -282,18 +284,18 @@ const router = createBrowserRouter([
         element: <ReferralDetailsPage />,
       },
 
-      // 6. Clinical Reports & Analytics
+      // 6. Clinical Reports & Analytics (Group D / Milestone 13)
       {
         path: '/reports',
-        element: (
-          <PlaceholderPage
-            title="Reports Dashboard"
-            description="Practice volume, department performance, and encounter trends."
-            module="Clinical Reports"
-            nodeId="1:2590 / 1:7010"
-            targetMilestone="Milestone 6"
-          />
-        ),
+        element: <ReportsDashboardPage />,
+      },
+      {
+        path: '/reports/critical',
+        element: <CriticalReportReviewPage />,
+      },
+      {
+        path: '/reports/critical/:id',
+        element: <CriticalReportReviewPage />,
       },
       {
         path: '/reports/outcomes',

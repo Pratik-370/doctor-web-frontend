@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Clock,
   History,
@@ -18,16 +18,41 @@ import {
 } from 'lucide-react';
 import doctorAvatarPrimary from '@/assets/avatars/doctor-profile-primary.png';
 
+interface ReferralLocationState {
+  patient?: {
+    name: string;
+    id: string;
+    mrn?: string;
+    ageGender: string;
+    bloodGroup?: string;
+  };
+  specialty?: string;
+  primaryReason?: string;
+  clinicalSummary?: string;
+  priority?: 'routine' | 'urgent';
+}
+
 export const CreateReferralPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = (location.state as ReferralLocationState) || null;
 
-  // Form State
+  // Active patient context (defaults to canonical Marcus Johnson if opened standalone)
+  const activePatient = navState?.patient || {
+    name: 'Marcus Johnson',
+    id: 'HV-9284–771',
+    mrn: 'HV-9284–771',
+    ageGender: '48 Yrs / Male',
+    bloodGroup: 'O Positive',
+  };
+
+  // Form State initialized with passed context or defaults
   const [doctorSearch, setDoctorSearch] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('');
+  const [selectedSpecialty, setSelectedSpecialty] = useState(navState?.specialty || '');
   const [selectedFacility, setSelectedFacility] = useState('');
-  const [primaryReason, setPrimaryReason] = useState('');
-  const [clinicalSummary, setClinicalSummary] = useState('');
-  const [priority, setPriority] = useState<'routine' | 'urgent'>('routine');
+  const [primaryReason, setPrimaryReason] = useState(navState?.primaryReason || '');
+  const [clinicalSummary, setClinicalSummary] = useState(navState?.clinicalSummary || '');
+  const [priority, setPriority] = useState<'routine' | 'urgent'>(navState?.priority || 'routine');
 
   // Included records state
   const [bundledRecords, setBundledRecords] = useState({
@@ -95,7 +120,7 @@ export const CreateReferralPage: React.FC = () => {
             Create New Referral
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Doctor Portal › Patient Directory › Marcus Johnson › New Referral
+            Doctor Portal › Patient Directory › {activePatient.name} › New Referral
           </p>
         </div>
 
@@ -115,7 +140,7 @@ export const CreateReferralPage: React.FC = () => {
           <div className="relative">
             <img
               src={doctorAvatarPrimary}
-              alt="Marcus Johnson"
+              alt={activePatient.name}
               className="size-14 rounded-full object-cover border-2 border-slate-100 shadow-sm"
             />
             <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-teal-500 text-white flex items-center justify-center border-2 border-white shadow-xs">
@@ -124,25 +149,32 @@ export const CreateReferralPage: React.FC = () => {
           </div>
           <div>
             <div className="text-xs text-slate-400 font-medium">Patient Name</div>
-            <div className="text-base font-bold text-slate-900">Marcus Johnson</div>
+            <div className="text-base font-bold text-slate-900">{activePatient.name}</div>
           </div>
         </div>
 
         <div>
-          <div className="text-xs text-slate-400 font-medium">Patient ID</div>
-          <div className="text-sm font-semibold text-slate-800">HV-9284–771</div>
+          <div className="text-xs text-slate-400 font-medium">
+            {activePatient.mrn && activePatient.mrn !== activePatient.id ? 'Patient ID / MRN' : 'Patient ID'}
+          </div>
+          <div className="text-sm font-semibold text-slate-800">
+            {activePatient.id}
+            {activePatient.mrn && activePatient.mrn !== activePatient.id && (
+              <span className="text-xs text-slate-500 ml-1.5 font-normal">(MRN: {activePatient.mrn})</span>
+            )}
+          </div>
         </div>
 
         <div>
           <div className="text-xs text-slate-400 font-medium">Age / Gender</div>
-          <div className="text-sm font-semibold text-slate-800">48 Yrs / Male</div>
+          <div className="text-sm font-semibold text-slate-800">{activePatient.ageGender}</div>
         </div>
 
         <div>
           <div className="text-xs text-slate-400 font-medium">Blood Group</div>
           <div className="text-sm font-semibold text-slate-800 flex items-center gap-1 text-red-600">
             <Droplet className="size-3.5 fill-red-600 text-red-600" />
-            <span>O Positive</span>
+            <span>{activePatient.bloodGroup || 'O Positive'}</span>
           </div>
         </div>
       </div>
