@@ -186,3 +186,66 @@ export const DEFAULT_OFFER_STATE: TreatmentOfferState = {
   doctorSpecialty: 'Cardiology Specialist',
   auditHash: 'SHA256-8921-TR-VERIFIED-7A890D',
 };
+
+export interface ProceduralSlot {
+  id: string;
+  timeWindow: string;
+  durationMinutes: number;
+  suiteName: string;
+  suiteNumber: number;
+  status: 'available' | 'selected' | 'booked' | 'conflict' | 'maintenance';
+  attendingName?: string;
+  procedureType?: string;
+  checkInTime?: string;
+  holdExpiresMinutes?: number;
+  tags?: string[];
+}
+
+export interface AppointmentRecord {
+  appointmentId: string;
+  offerId: string;
+  patientId: string;
+  patientName: string;
+  procedureName: string;
+  cptCode: string;
+  facility: string;
+  facilityAddress: string;
+  suite: string;
+  scheduledDate: string;
+  scheduledTime: string;
+  arrivalWindow: string;
+  attendingDoctor: string;
+  attendingLicense: string;
+  anesthesiaProtocol: string;
+  anesthesiaStaff: string;
+  underwrittenAmount: string;
+  financingPlan: string;
+  lockedTimestamp: string;
+  auditHash: string;
+  readinessPercentage: number;
+}
+
+export const DEFAULT_APPOINTMENT_RECORD: AppointmentRecord = {
+  appointmentId: '#PROC-2026-93458',
+  offerId: 'TR-8921',
+  patientId: '8472-9901',
+  patientName: 'Robert J. Sterling',
+  procedureName: 'Diagnostic Cardiac Catheterization & Coronary Angiogram',
+  cptCode: 'CPT #93458',
+  facility: 'Mount Sinai Hospital',
+  facilityAddress: '1468 Madison Ave, 3rd Floor Cath Lab Pavilion, New York, NY',
+  suite: 'Cath Lab Suite 3 (Interventional Wing, 4th Fl)',
+  scheduledDate: 'Wednesday, Nov 4, 2026',
+  scheduledTime: '09:30 AM – 11:00 AM EST',
+  arrivalWindow: '07:30 AM EST (2 Hours Prior)',
+  attendingDoctor: 'Dr. Michael Chang, MD',
+  attendingLicense: 'State Lic #88392 • Interventional Cardiology',
+  anesthesiaProtocol: 'MAC Tier 1 Standby (Mild conscious sedation / Local lidocaine 1%)',
+  anesthesiaStaff: 'NP Elena Rostova / CRNA Standby',
+  underwrittenAmount: '$4,420.00',
+  financingPlan: 'Care ID In-House 0% APR (12-Mo)',
+  lockedTimestamp: 'Oct 19, 2026 • 02:45 PM',
+  auditHash: 'SHA256:4b91f638c502e8f118de00184bba74902b7c7a5128106c820a',
+  readinessPercentage: 60,
+};
+

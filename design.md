@@ -130,13 +130,15 @@ Every milestone must execute the full 7-step quality cycle:
 | `1:4560` | `Records - Imaging & Radiology Viewer` | Dedicated Route (`/records/imaging/:id`) |
 | `1:4670` | `Records - Pathology Reports` | Dedicated Route (`/records/pathology`) |
 
-### E. OCR & Document Processing (4 Frames: 2 Production, 2 Drafts Excluded)
-| Node ID | Figma Frame Name | Role / Classification | Status |
-| :--- | :--- | :--- | :--- |
-| `1:5010` | `OCR - Document Upload & Processing` | Dedicated Route (`/ocr/upload`) | Production Scope |
-| `1:5120` | `OCR - Extracted Data Review & Verification`| Dedicated Route (`/ocr/verify/:id`) | Production Scope |
-| `1:12893` | `OCR - Upload Document (Exploration)` | Exploratory Draft | **Excluded** |
-| `1:13265` | `OCR - Scanning State (Exploration)` | Exploratory Draft | **Excluded** |
+### E. OCR & Document Processing Pipeline (6 Frames Total: 4 Production Frames, 2 Drafts Excluded)
+| Node ID | Figma Frame Name | Role / Classification | Dimensions | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `1:1167` | `Upload Medical Record - Initial State` | Dedicated Route (`/records/upload`, `/ocr/upload`) | 1280 × 1024 px | **Production Scope (Implemented)** |
+| `1:1088` | `OCR Processing - Data Extraction` | State / Modal Flow (`/records/ocr/processing`) | 1280 × 1024 px | **Production Scope (Implemented)** |
+| `1:1325` | `OCR Review & Field Verification` | Dedicated Route (`/records/ocr/review`, `/ocr/verify/:id`) | 1280 × 1226 px | **Production Scope (Implemented)** |
+| `1:1513` | `Upload Success - Record Saved` | State / Route Flow (`/records/ocr/success`) | 1280 × 1024 px | **Production Scope (Implemented)** |
+| `1:12893` | `OCR - Upload Document (Exploration)` | Exploratory Draft (`1576 × 1060 px`) | 1576 × 1060 px | **Excluded** |
+| `1:13265` | `OCR - Scanning State (Exploration)` | Exploratory Draft (`1576 × 1060 px`) | 1576 × 1060 px | **Excluded** |
 
 ### F. Referrals & Consultations (4 Frames)
 | Node ID | Figma Frame Name | Role / Classification |

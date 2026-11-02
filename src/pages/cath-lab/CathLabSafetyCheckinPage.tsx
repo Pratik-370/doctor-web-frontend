@@ -116,7 +116,7 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
     setShowRatifyModal(false);
     triggerToast('Cryptographic handshake signed! Proceeding to active procedure encounter.');
     setTimeout(() => {
-      navigate('/treatment-offers/TR-8921/completed', { state: { ...data, ...incomingOffer } });
+      navigate('/treatment-offers/TR-8921/encounter/start', { state: { ...data, ...incomingOffer } });
     }, 1500);
   };
 

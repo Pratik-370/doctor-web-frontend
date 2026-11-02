@@ -18,7 +18,18 @@ import { InsuranceFinancingHubPage } from '@/pages/financing/InsuranceFinancingH
 import { TreatmentOfferCreatePage } from '@/pages/treatment-offers/TreatmentOfferCreatePage';
 import { TreatmentOfferReviewPage } from '@/pages/treatment-offers/TreatmentOfferReviewPage';
 import { TreatmentOfferStatusPage } from '@/pages/treatment-offers/TreatmentOfferStatusPage';
+import { TreatmentOfferAcceptedPage } from '@/pages/treatment-offers/TreatmentOfferAcceptedPage';
+import { ClinicalHandoffPage } from '@/pages/treatment-offers/ClinicalHandoffPage';
+import { ProcedureSchedulingPage } from '@/pages/treatment-offers/ProcedureSchedulingPage';
+import { AppointmentDetailsPage } from '@/pages/treatment-offers/AppointmentDetailsPage';
+import { PreOpReadinessPage } from '@/pages/treatment-offers/PreOpReadinessPage';
+import { DayOfCheckinPage } from '@/pages/treatment-offers/DayOfCheckinPage';
 import { CathLabSafetyCheckinPage } from '@/pages/cath-lab/CathLabSafetyCheckinPage';
+import { StartClinicalEncounterPage } from '@/pages/cath-lab/StartClinicalEncounterPage';
+import { ActiveProcedureDocumentationPage } from '@/pages/cath-lab/ActiveProcedureDocumentationPage';
+import { PostProcedureSummaryPage } from '@/pages/cath-lab/PostProcedureSummaryPage';
+import { EncounterCompletedPage } from '@/pages/cath-lab/EncounterCompletedPage';
+import { MedicalRecordUploadPage } from '@/pages/ocr/MedicalRecordUploadPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
@@ -208,28 +219,36 @@ const router = createBrowserRouter([
 
       // 4. OCR & Document Processing
       {
+        path: '/records/upload',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
+        path: '/records/ocr',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
+        path: '/records/ocr/upload',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
+        path: '/records/ocr/processing',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
+        path: '/records/ocr/review',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
+        path: '/records/ocr/success',
+        element: <MedicalRecordUploadPage />,
+      },
+      {
         path: '/ocr/upload',
-        element: (
-          <PlaceholderPage
-            title="Upload Medical Record for OCR"
-            description="Automated AI document ingestion, extraction, and clinical parsing."
-            module="OCR Processing"
-            nodeId="1:1167 / 1:5010"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <MedicalRecordUploadPage />,
       },
       {
         path: '/ocr/verify/:id',
-        element: (
-          <PlaceholderPage
-            title="OCR Review & Field Verification"
-            description="Physician verification and correction of digitized clinical data."
-            module="OCR Processing"
-            nodeId="1:1325 / 1:5120"
-            targetMilestone="Milestone 5"
-          />
-        ),
+        element: <MedicalRecordUploadPage />,
       },
 
       // 5. Referrals & Consultations
@@ -423,31 +442,39 @@ const router = createBrowserRouter([
       },
       {
         path: '/treatment-offers/:id/accepted',
-        element: (
-          <PlaceholderPage
-            title="Accepted Treatment Offer"
-            description="Patient acceptance notification and financing clearance."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:9001 / 1:15290"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <TreatmentOfferAcceptedPage />,
+      },
+      {
+        path: '/treatment-offers/:id/clearance',
+        element: <ClinicalHandoffPage />,
       },
       {
         path: '/treatment-offers/:id/schedule',
-        element: (
-          <PlaceholderPage
-            title="Procedure Slot Scheduling"
-            description="Book operating theater, cardiac cath lab, or procedure suite."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:10206 / 1:15370"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <ProcedureSchedulingPage initialMode="select" />,
+      },
+      {
+        path: '/treatment-offers/:id/schedule/review',
+        element: <ProcedureSchedulingPage initialMode="review" />,
+      },
+      {
+        path: '/treatment-offers/:id/scheduled',
+        element: <ProcedureSchedulingPage initialMode="confirmed" />,
+      },
+      {
+        path: '/treatment-offers/:id/appointment',
+        element: <AppointmentDetailsPage />,
       },
       {
         path: '/treatment-offers/:id/pre-op',
-        element: <CathLabSafetyCheckinPage />,
+        element: <PreOpReadinessPage />,
+      },
+      {
+        path: '/treatment-offers/:id/check-in',
+        element: <DayOfCheckinPage />,
+      },
+      {
+        path: '/treatment-offers/:id/day-of-checkin',
+        element: <DayOfCheckinPage />,
       },
       {
         path: '/treatment-offers/:id/cath-lab-safety',
@@ -458,16 +485,28 @@ const router = createBrowserRouter([
         element: <CathLabSafetyCheckinPage />,
       },
       {
+        path: '/treatment-offers/:id/encounter',
+        element: <StartClinicalEncounterPage />,
+      },
+      {
+        path: '/treatment-offers/:id/encounter/start',
+        element: <StartClinicalEncounterPage />,
+      },
+      {
+        path: '/cath-lab/encounter/:id/start',
+        element: <StartClinicalEncounterPage />,
+      },
+      {
         path: '/treatment-offers/:id/in-progress',
-        element: (
-          <PlaceholderPage
-            title="Active Procedure Documentation"
-            description="Intra-op surgical check-in and live clinical status recording."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:13596 / 1:15530"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <ActiveProcedureDocumentationPage />,
+      },
+      {
+        path: '/treatment-offers/:id/encounter/active',
+        element: <ActiveProcedureDocumentationPage />,
+      },
+      {
+        path: '/cath-lab/encounter/:id/active',
+        element: <ActiveProcedureDocumentationPage />,
       },
       {
         path: '/treatment-offers/:id/notes',
@@ -483,15 +522,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/treatment-offers/:id/post-op',
-        element: (
-          <PlaceholderPage
-            title="Post-Procedure Summary & Discharge"
-            description="Recovery room vitals, discharge instructions, and recovery readiness."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:15586 / 1:15690"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <PostProcedureSummaryPage />,
+      },
+      {
+        path: '/treatment-offers/:id/encounter/post-op',
+        element: <PostProcedureSummaryPage />,
       },
       {
         path: '/treatment-offers/:id/prescription',
@@ -519,27 +554,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/treatment-offers/:id/summary',
-        element: (
-          <PlaceholderPage
-            title="Treatment Lifecycle Summary"
-            description="Comprehensive clinical case dossier and completed billing records."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:15930"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <EncounterCompletedPage />,
       },
       {
         path: '/treatment-offers/:id/completed',
-        element: (
-          <PlaceholderPage
-            title="Care ID Doctor - Encounter Completed"
-            description="Final milestone: Patient discharge complete, encounter closed, and EHR sync finalized."
-            module="CareID Treatment Lifecycle"
-            nodeId="1:16047 (Hidden Production Frame)"
-            targetMilestone="Milestone 7"
-          />
-        ),
+        element: <EncounterCompletedPage />,
       },
     ],
   },

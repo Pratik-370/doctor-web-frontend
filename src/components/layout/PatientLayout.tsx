@@ -28,7 +28,20 @@ export const PatientLayout: React.FC = () => {
   const isSpecialWorkstation =
     location.pathname.includes('/financing') ||
     location.pathname.includes('/cath-lab-safety') ||
-    location.pathname.includes('/pre-op');
+    location.pathname.includes('/encounter') ||
+    location.pathname.includes('/post-op') ||
+    location.pathname.includes('/completed') ||
+    location.pathname.includes('/pre-op') ||
+    location.pathname.includes('/ocr') ||
+    location.pathname.includes('/records/upload') ||
+    location.pathname.includes('/records/ocr') ||
+    location.pathname.includes('/accepted') ||
+    location.pathname.includes('/clearance') ||
+    location.pathname.includes('/schedule') ||
+    location.pathname.includes('/appointment') ||
+    location.pathname.includes('/check-in') ||
+    location.pathname.includes('/day-of-checkin') ||
+    location.pathname.includes('/scheduled');
 
   const isPatientsRoute =
     location.pathname.startsWith('/patients') ||
@@ -36,7 +49,8 @@ export const PatientLayout: React.FC = () => {
       !location.pathname.startsWith('/records/labs') &&
       !location.pathname.startsWith('/records/imaging')) ||
     location.pathname.startsWith('/treatment-offers') ||
-    location.pathname.startsWith('/cath-lab-safety');
+    location.pathname.startsWith('/cath-lab-safety') ||
+    location.pathname.startsWith('/ocr');
   const isReportsRoute =
     location.pathname.startsWith('/reports') ||
     location.pathname.startsWith('/records/labs') ||

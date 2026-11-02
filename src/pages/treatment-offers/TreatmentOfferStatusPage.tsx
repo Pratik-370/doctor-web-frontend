@@ -19,6 +19,7 @@ import {
   CreditCard,
   Building,
   Hash,
+  ArrowRight,
 } from 'lucide-react';
 import { TreatmentOfferState, DEFAULT_OFFER_STATE } from './types';
 
@@ -315,20 +316,20 @@ export const TreatmentOfferStatusPage: React.FC = () => {
             <span className="text-[10px] text-slate-400">0% APR Contract</span>
           </div>
 
-          {/* Phase 5: Cath Lab Clearance */}
+          {/* Phase 5: Clinical Handoff & Cath Lab */}
           <button
             type="button"
-            onClick={() => navigate(`/treatment-offers/${offer.offerId}/cath-lab-safety`, { state: offer })}
+            onClick={() => navigate(`/treatment-offers/${offer.offerId}/accepted`, { state: offer })}
             className="bg-purple-50/50 hover:bg-purple-50 border border-purple-200 hover:border-purple-300 rounded-xl p-3 flex flex-col gap-1 transition-all text-left cursor-pointer group"
           >
             <div className="flex items-center justify-between w-full">
-              <span className="text-[#3f1d8b] text-xs font-bold group-hover:underline">5. Cath Lab Clearance</span>
+              <span className="text-[#3f1d8b] text-xs font-bold group-hover:underline">5. Clinical Handoff</span>
               <span className="bg-[#3f1d8b] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                Verify
+                Proceed
               </span>
             </div>
-            <span className="text-[11px] text-[#3f1d8b] font-medium">Scheduled Hold (Nov 4)</span>
-            <span className="text-[10px] text-slate-500">Launch Safety Time-Out →</span>
+            <span className="text-[11px] text-[#3f1d8b] font-medium">Offer Accepted</span>
+            <span className="text-[10px] text-slate-500">Begin Scheduling Flow →</span>
           </button>
         </div>
       </div>
@@ -598,19 +599,19 @@ export const TreatmentOfferStatusPage: React.FC = () => {
             <div className="flex flex-col gap-2.5">
               <button
                 type="button"
-                onClick={() => navigate(`/treatment-offers/${offer.offerId}/cath-lab-safety`, { state: offer })}
-                className="w-full py-2.5 bg-[#28006d] hover:bg-[#3f1d8b] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                onClick={() => navigate(`/treatment-offers/${offer.offerId}/accepted`, { state: offer })}
+                className="w-full py-3 bg-[#24005A] hover:bg-[#34007a] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <ShieldCheck className="w-4 h-4 text-[#5af8fb]" />
-                <span>Cath Lab Intra-Procedure Safety Check-in</span>
+                <span>Proceed to Clinical Handoff & Scheduling</span>
+                <ArrowRight className="w-4 h-4 text-emerald-400" />
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowPdfModal(true)}
-                className="w-full py-3 bg-gradient-to-r from-[#a44cff] to-[#5b14b8] text-white text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 border border-[#e2e8f0] bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="w-4 h-4 text-slate-500" />
                 <span>View Full Offer Agreement (PDF)</span>
               </button>
 
@@ -629,6 +630,17 @@ export const TreatmentOfferStatusPage: React.FC = () => {
               >
                 Withdraw / Cancel Offer
               </button>
+
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => navigate(`/treatment-offers/${offer.offerId}/cath-lab-safety`, { state: offer })}
+                  className="text-[11px] text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1.5 py-1 text-center transition-colors cursor-pointer"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Developer Testing: Direct Cath Lab Time-Out Bypass</span>
+                </button>
+              </div>
             </div>
           </div>
 

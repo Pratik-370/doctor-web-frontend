@@ -66,9 +66,22 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
     if (
       location.pathname.includes('/financing') ||
       location.pathname.includes('/cath-lab-safety') ||
-      location.pathname.includes('/pre-op')
+      location.pathname.includes('/encounter') ||
+      location.pathname.includes('/post-op') ||
+      location.pathname.includes('/completed') ||
+      location.pathname.includes('/pre-op') ||
+      location.pathname.includes('/ocr') ||
+      location.pathname.includes('/records/upload') ||
+      location.pathname.includes('/records/ocr') ||
+      location.pathname.includes('/accepted') ||
+      location.pathname.includes('/clearance') ||
+      location.pathname.includes('/schedule') ||
+      location.pathname.includes('/appointment') ||
+      location.pathname.includes('/check-in') ||
+      location.pathname.includes('/day-of-checkin') ||
+      location.pathname.includes('/scheduled')
     ) {
-      // Frame 1:5316 and 1:14096 render their own integrated patient-contextual header breadcrumbs
+      // Frames render their own integrated patient-contextual header breadcrumbs
       return [];
     }
     if (location.pathname.startsWith('/treatment-offers/new')) {

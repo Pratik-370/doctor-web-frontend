@@ -11,6 +11,7 @@ import {
   Pill,
   Search,
   TrendingUp,
+  Upload,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import patientAvatarHero from '@/assets/avatars/patient-avatar-hero.png';
@@ -156,6 +157,15 @@ export const MedicalRecordsPage: React.FC = () => {
             className="h-10 px-5 rounded-lg bg-white border border-[#cbc4d4] text-sm font-semibold text-[#191c1d] hover:bg-slate-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#5b14b8]"
           >
             <span>Back to Profile</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/records/upload')}
+            className="h-10 px-5 rounded-lg bg-white border border-[#cbc4d4] text-sm font-semibold text-[#191c1d] hover:bg-slate-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#5b14b8] flex items-center gap-1.5"
+          >
+            <Upload className="size-4 text-[#5b14b8]" />
+            <span>Upload Record</span>
           </button>
 
           {/* Canonical Primary Action Button (Figma node 1:40) */}
