@@ -114,5 +114,16 @@ doctor-web-frontend/
 ## 6. Project Governance & Status
 
 - **Figma Design Scope**: 48 frames total (47 visible + 1 hidden), 2 exploratory drafts excluded (`1:12893` and `1:13265`), 46 production candidates (39 dedicated routes and 7 in-flow workflow states).
-- **Current Milestone**: Milestone 2 (Design Tokens & Shared Layout Shell) — **Complete**.
-- **Next Milestone**: Milestone 3 (Authentication & Onboarding Workflow).
+- **Current Milestone**: Engineering Hardening Phase — **Complete**.
+- **Figma Coverage**: 46 of 46 production candidates implemented (100%).
+
+---
+
+## 7. Project Documentation
+
+Comprehensive architectural and engineering documentation is available across the repository:
+
+- [`HANDOVER.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/HANDOVER.md) — Canonical technical handover guide, technology stack, architecture diagrams, route inventory, and backend integration roadmap.
+- [`phases.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/phases.md) — Master Development Roadmap, 46-candidate Figma inventory, and milestone tracking.
+- [`design.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/design.md) — Visual design tokens, layout specifications, typography, and styling rules.
+- [`implementation.md`](file:///s:/PROJECTS_CODEXDOT/doctor-web-frontend/implementation.md) — Chronological execution log, engineering hardening records, and test results.
