@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BadgeCheck,
   Building2,
+  Camera,
   CheckCircle2,
   ChevronRight,
   Edit3,
@@ -12,36 +13,69 @@ import {
   MapPin,
   Phone,
   Radio,
+  RotateCcw,
   ShieldCheck,
   Stethoscope,
+  Upload,
   X,
 } from 'lucide-react';
-import { DEFAULT_DOCTOR_PROFILE, DoctorProfile } from './types';
+import { DoctorProfile } from './types';
+import { useAuth } from '@/context/AuthContext';
 import doctorProfilePrimary from '@/assets/avatars/doctor-profile-primary.png';
 
 export const ProfessionalProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, updateProfile, updateAvatar, resetAvatar } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [profile, setProfile] = useState<DoctorProfile>(DEFAULT_DOCTOR_PROFILE);
+  const profile = user.profile;
   const [isEditing, setIsEditing] = useState(false);
-  const [editFormData, setEditFormData] = useState<DoctorProfile>(DEFAULT_DOCTOR_PROFILE);
+  const [editFormData, setEditFormData] = useState<DoctorProfile>(user.profile);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const handleOpenEdit = () => {
-    setEditFormData({ ...profile });
+    setEditFormData({ ...user.profile });
     setIsEditing(true);
   };
 
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    setProfile({ ...editFormData });
+    updateProfile(editFormData);
     setIsEditing(false);
     showToast('Professional profile updated successfully');
+  };
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      showToast('Invalid file format. Please upload a PNG, JPG, or WEBP image.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File size exceeds the 5 MB limit. Please select a smaller photo.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        updateAvatar(reader.result);
+        showToast('Demonstration Note: Profile photo updated in local browser memory. Permanent avatar storage requires cloud asset integration.');
+      }
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -119,12 +153,22 @@ export const ProfessionalProfilePage: React.FC = () => {
           {/* Avatar Container with Overlap */}
           <div className="px-6 pb-6 pt-0 relative space-y-4">
             <div className="-mt-12 flex justify-center relative">
-              <div className="size-24 rounded-full border-4 border-white shadow-md overflow-hidden bg-slate-100 relative">
+              <div className="size-24 rounded-full border-4 border-white shadow-md overflow-hidden bg-slate-100 relative group">
                 <img
-                  src={doctorProfilePrimary}
+                  src={user.avatarUrl || doctorProfilePrimary}
                   alt={profile.name}
                   className="size-full object-cover"
                 />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  title="Upload New Photo"
+                  aria-label="Upload New Photo"
+                >
+                  <Camera className="size-5" />
+                  <span className="text-[9px] font-bold mt-0.5">Change</span>
+                </button>
               </div>
               <div className="absolute bottom-0 right-1/2 translate-x-10 size-6 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-white shadow-xs">
                 <BadgeCheck className="size-3.5" />
@@ -160,6 +204,41 @@ export const ProfessionalProfilePage: React.FC = () => {
 
             {/* Profile Action Buttons */}
             <div className="space-y-2 pt-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                className="hidden"
+                data-testid="profile-photo-input"
+                onChange={handlePhotoSelect}
+              />
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Upload className="size-3.5 text-slate-500" />
+                  <span>Upload Photo</span>
+                </button>
+
+                {user.avatarUrl !== doctorProfilePrimary && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      resetAvatar();
+                      showToast('Profile photo reset to default demonstration avatar');
+                    }}
+                    className="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-500 text-xs font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    title="Reset to default photo"
+                  >
+                    <RotateCcw className="size-3.5" />
+                    <span>Reset</span>
+                  </button>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={handleOpenEdit}

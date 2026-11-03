@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Clock,
   Download,
   Hospital,
+  Pill,
   Plus,
+  ShieldAlert,
+  X,
 } from 'lucide-react';
 
+interface PrescriptionItem {
+  id: string;
+  medicine: string;
+  dose: string;
+  frequency: string;
+  duration: string;
+  status: string;
+  statusType: 'active' | 'completed';
+  prescriber: string;
+}
+
 export const PrescriptionsPage: React.FC = () => {
-  const prescriptions = [
+  const [selectedRefillItem, setSelectedRefillItem] = useState<PrescriptionItem | null>(null);
+  const [showNewEntryNotice, setShowNewEntryNotice] = useState(false);
+
+  const prescriptions: PrescriptionItem[] = [
     {
       id: 'RX-9402',
       medicine: 'Lisinopril',
@@ -62,7 +79,7 @@ export const PrescriptionsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => window.print()}
-              className="h-10 px-4 rounded-lg bg-white border border-[#cbc4d4] text-xs font-semibold text-[#191c1d] hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-sm focus:outline-none"
+              className="h-10 px-4 rounded-lg bg-white border border-[#cbc4d4] text-xs font-semibold text-[#191c1d] hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-sm focus:outline-none cursor-pointer"
             >
               <Download className="size-4 text-[#494552]" aria-hidden="true" />
               <span>Export Record</span>
@@ -71,7 +88,8 @@ export const PrescriptionsPage: React.FC = () => {
             {/* Canonical Primary Action Button (Figma node 1:40) */}
             <button
               type="button"
-              className="h-10 px-5 rounded-lg bg-gradient-to-b from-[#a44cff] to-[#5b14b8] text-white text-xs font-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-1.5 focus:outline-none"
+              onClick={() => setShowNewEntryNotice(true)}
+              className="h-10 px-5 rounded-lg bg-gradient-to-b from-[#a44cff] to-[#5b14b8] text-white text-xs font-semibold hover:opacity-95 transition-all shadow-sm flex items-center gap-1.5 focus:outline-none cursor-pointer"
             >
               <Plus className="size-4 stroke-[2.5]" aria-hidden="true" />
               <span>New Entry</span>
@@ -114,6 +132,7 @@ export const PrescriptionsPage: React.FC = () => {
                     <th className="py-2.5 px-3">Duration</th>
                     <th className="py-2.5 px-3">Status</th>
                     <th className="py-2.5 px-3">Prescribed By</th>
+                    <th className="py-2.5 px-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-xs">
@@ -138,6 +157,19 @@ export const PrescriptionsPage: React.FC = () => {
                         )}
                       </td>
                       <td className="py-3 px-3 text-[#494552]">{item.prescriber}</td>
+                      <td className="py-3 px-3 text-right">
+                        {item.statusType === 'active' ? (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedRefillItem(item)}
+                            className="px-2.5 py-1 rounded-lg border border-slate-200 hover:border-[#5b14b8] hover:bg-purple-50 text-[#5b14b8] text-[11px] font-semibold transition-colors cursor-pointer"
+                          >
+                            Authorize Refill
+                          </button>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 italic">Discontinued</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -221,6 +253,123 @@ export const PrescriptionsPage: React.FC = () => {
           </div>
         </aside>
       </div>
+
+      {/* Electronic Prescription Refill Authorization Modal */}
+      {selectedRefillItem && (
+        <div
+          data-testid="refill-authorization-modal"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+          role="dialog"
+          aria-labelledby="refill-modal-title"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-200 animate-in zoom-in-95">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5 text-[#5b14b8]">
+                <Pill className="size-5" />
+                <div>
+                  <h3 id="refill-modal-title" className="text-base font-bold text-slate-900">
+                    Electronic Refill Authorization (e-Rx)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Prescription ID: {selectedRefillItem.id}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRefillItem(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                aria-label="Close dialog"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Patient:</span>
+                <span className="font-bold text-slate-900">Eleanor Vance (ID: #84920)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Medication:</span>
+                <span className="font-bold text-slate-900">{selectedRefillItem.medicine} {selectedRefillItem.dose}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Regimen:</span>
+                <span className="text-slate-800 font-medium">{selectedRefillItem.frequency} • {selectedRefillItem.duration}</span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-slate-200">
+                <span className="text-slate-500">Supervising Physician:</span>
+                <span className="font-semibold text-[#5b14b8]">{selectedRefillItem.prescriber}</span>
+              </div>
+            </div>
+
+            {/* Truthful Clinical Notice */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900 space-y-1.5 leading-relaxed">
+              <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                <ShieldAlert className="size-4 text-amber-700 shrink-0" />
+                <span>Demonstration Environment Notice — No Gateway Connection</span>
+              </div>
+              <p>
+                Electronic prescribing, DEA schedule compliance checks, and certified pharmacy routing are simulated in this preview. In a live hospital deployment, issuing a valid refill authorization requires integration with a certified Surescripts e-Rx network gateway, patient formulary verification, and cryptographic signing with a hardware token.
+              </p>
+              <p className="text-[11px] text-amber-800 font-medium">
+                No electronic order has been transmitted to a retail pharmacy or committed to live hospital registries.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedRefillItem(null)}
+                className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                Close &amp; Return to Timeline
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Entry Notice Modal */}
+      {showNewEntryNotice && (
+        <div
+          data-testid="new-entry-notice-modal"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+          role="dialog"
+          aria-labelledby="new-entry-title"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200 animate-in zoom-in-95">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+              <h3 id="new-entry-title" className="text-base font-bold text-slate-900">
+                Medication Formulary Order
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowNewEntryNotice(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                aria-label="Close dialog"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Demonstration Notice: Creating a new medication entry requires connecting to a live hospital drug formulary and computerized physician order entry (CPOE) backend. In this prototype, new orders are restricted to demonstration records.
+            </p>
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowNewEntryNotice(false)}
+                className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold cursor-pointer"
+              >
+                Understood
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -30,7 +30,6 @@ import {
   CathLabContext,
   SafetyChecklistState,
 } from './types';
-import ecgSparkline from '@/assets/medical/ecg-sparkline.svg';
 import surgicalSafetySeal from '@/assets/medical/surgical-safety-seal.svg';
 import patientAvatarHero from '@/assets/avatars/patient-avatar-hero.png';
 
@@ -628,13 +627,25 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
                     Demonstrated 1.8mm horizontal ST-depression in anterolateral leads{' '}
                     <strong className="font-mono text-[#0b1c30]">V4-V6</strong> at 8.4 METs. Correlates with suspected mid-to-distal LAD or diagonal lesion.
                   </p>
-                  {/* Mini ECG Sparkline Chart */}
-                  <div className="bg-white border border-slate-200/80 rounded p-1.5 flex items-center justify-center h-10 mt-auto">
-                    <img
-                      src={ecgSparkline}
-                      alt="Mini ECG Telemetry Sparkline"
-                      className="w-full h-7 object-contain"
-                    />
+                  {/* Mini ECG Sparkline Chart (OPT-02: Responsive Vector ViewBox) */}
+                  <div
+                    data-testid="ecg-sparkline-container"
+                    className="bg-white border border-slate-200/80 rounded p-1.5 flex items-center justify-center h-10 mt-auto overflow-hidden"
+                  >
+                    <svg
+                      viewBox="0 0 172 26"
+                      className="w-full h-7 text-[#28006D]"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      preserveAspectRatio="xMidYMid meet"
+                      aria-label="Mini ECG Telemetry Sparkline"
+                    >
+                      <path
+                        d="M0 15.0664H25.65H29.925L34.2 17.0664L38.475 9.06641L42.75 25.0664L47.025 3.06641L51.3 15.0664H58.14L66.69 21.0664H81.225L89.775 15.0664H111.15H115.425L119.7 17.0664L123.975 9.06641L128.25 25.0664L132.525 3.06641L136.8 15.0664H143.64L152.19 21.0664H166.725L171 15.0664"
+                        strokeWidth="1.62"
+                        stroke="currentColor"
+                      />
+                    </svg>
                   </div>
                 </div>
 
@@ -1069,10 +1080,14 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
 
       {/* ============================================================ */}
       {/* MODAL 2: TIME-OUT RATIFICATION & CRYPTOGRAPHIC STAMP MODAL    */}
+      {/* (OPT-03: Subpixel Padding & Geometry Alignment)             */}
       {/* ============================================================ */}
       {showRatifyModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-[16px] max-w-[540px] w-full p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95">
+        <div
+          data-testid="ratify-timeout-modal"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+        >
+          <div className="bg-white rounded-2xl max-w-[560px] w-full p-6 shadow-2xl border border-[#e1e3e4] flex flex-col gap-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5 text-[#28006d]">
                 <ShieldCheck className="w-5 h-5 text-[#3f1d8b]" />
@@ -1083,13 +1098,14 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowRatifyModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                aria-label="Close modal"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="bg-[#f8fafc] border border-slate-200 rounded-xl p-3.5 flex flex-col gap-2 text-xs">
+            <div className="bg-[#f8fafc] border border-slate-200/90 rounded-xl p-4 flex flex-col gap-2.5 text-xs">
               <div className="flex justify-between">
                 <span className="text-slate-500">Patient:</span>
                 <span className="font-bold text-slate-800">
@@ -1120,7 +1136,7 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
                   4 Cath Personnel Present &amp; Scrubbed
                 </span>
               </div>
-              <div className="flex justify-between pt-1 border-t border-slate-200">
+              <div className="flex justify-between pt-1.5 border-t border-slate-200">
                 <span className="text-slate-500">Attending Operator:</span>
                 <span className="font-bold text-[#28006d]">
                   Dr. Michael Chang, MD (Lic #88392)
@@ -1128,11 +1144,11 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Cryptographic Hash Stamp Strip */}
-            <div className="bg-[#eff4ff] border border-purple-200 rounded-lg p-3 flex items-center justify-between text-[11px]">
+            {/* Cryptographic Hash Stamp Strip (OPT-03 refined geometry) */}
+            <div className="bg-[#eff4ff] border border-purple-200/90 rounded-xl p-3.5 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-[#28006d]" />
-                <span className="font-mono text-slate-700">
+                <span className="font-mono text-[11px] font-semibold text-[#28006d] tracking-tight">
                   SHA256-CATH-TIMEOUT-93458-VERIFIED-9B41E8C2
                 </span>
               </div>
@@ -1141,22 +1157,22 @@ export const CathLabSafetyCheckinPage: React.FC = () => {
               </span>
             </div>
 
-            <p className="text-[11px] text-slate-500 italic">
+            <p className="text-[11px] text-slate-500 leading-relaxed italic">
               By authorizing, you confirm under clinical penalty of perjury that all multidisciplinary team members performed verbal time-out verification prior to sheath insertion.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setShowRatifyModal(false)}
-                className="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 border border-[#cbc4d4] rounded-full text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors"
               >
                 Review Checkpoints
               </button>
               <button
                 type="button"
                 onClick={handleFinalRatification}
-                className="px-5 py-2.5 bg-gradient-to-r from-[#a44cff] to-[#5b14b8] text-white rounded-lg text-xs font-bold shadow-md hover:opacity-95 transition-opacity flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-b from-[#a44cff] to-[#5b14b8] text-white rounded-full text-xs font-bold shadow-sm hover:opacity-95 transition-opacity flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Authorize &amp; Proceed to Encounter</span>

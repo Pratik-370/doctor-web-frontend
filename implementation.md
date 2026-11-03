@@ -563,6 +563,72 @@
 
 ---
 
+## 4.12 Engineering Hardening Phase Execution Records
+
+1. **Objective & Scope**:
+   - Execute project-wide engineering stabilization, data safety hardening, and navigation integrity following the completion of Milestones 1–14 (all 46 canonical Figma production frames).
+   - Resolve long-standing architectural gaps and UX backlog items without disrupting accepted Figma designs, adding premature scope, or modifying commit history.
+
+2. **Architectural & Component Deliverables**:
+   - **Shared Physician Authentication Architecture (`src/context/AuthContext.tsx`, `useAuth()`)**:
+     - Created unified React context and custom hook wrapping the application root (`src/App.tsx`).
+     - Reconciled the dual presentation requirements:
+       - **Top-of-Sidebar Presentation Identity**: Displays `Dr. Clinical` and `Enterprise Healthcare` (Figma node `1:6939` / OPT-08 invariant).
+       - **Clinician Personal Profile Dossier**: Displays `Dr. Julian Vance`, MD, FACC, FSCAI (Figma node `1:4281`).
+     - Provided reactive state management (`updateProfile()`, `updateAvatar()`, `resetAvatar()`) enabling dynamic photo uploads and bio updates to propagate across the entire application immediately.
+     - Connected sidebar avatar and profile metadata in `src/components/layout/PatientLayout.tsx` directly to `useAuth()`.
+   - **Clinical OCR Patient Identity Provenance & Reconciliation Guardrail (OPT-09)**:
+     - Implemented multi-scenario document provenance and patient identity reconciliation architecture in `src/pages/ocr/MedicalRecordUploadPage.tsx` and `src/pages/ocr/types.ts`.
+     - Distinctly categorizes and handles four core clinical scenarios:
+       - **Scenario A (Genuine OCR Extraction Error)**: When the physical source document genuinely belongs to the active patient (e.g. Eleanor Vance, `HV-884-291`) but the optical scan misread an identifier character (e.g. `HV-884-29I`), the clinician reviews source document evidence and corrects the field. Once verified, the mismatch warning clears, and saving proceeds.
+       - **Scenario B (Genuine Different Patient)**: When the source document genuinely belongs to a third party (e.g. Jane Doe, `HV-992-081`), the system strictly blocks saving to Eleanor Vance's chart. Manual editing of demographic text inputs alone does NOT alter source document provenance: the UI displays an explicit `MANUAL FORM OVERRIDE REJECTED` alert and the save handler rejects the commit.
+       - **Scenario C (Matching Registered Patient Exists)**: When a mismatched document belongs to another patient registered in the clinic registry (Jane Doe, `HV-992-081`), the clinician can explicitly associate the document with their registered chart (`Associate with Registered Patient: Jane Doe`), switching active EHR context cleanly and allowing saving into Jane Doe's record.
+       - **Scenario D (Unresolved Identity)**: When a document belongs to an unregistered patient (`HV-000-000` / Unidentified), the system displays `UNRESOLVED PATIENT IDENTITY`, completely refuses chart association, and provides zero override buttons.
+     - **Independent Triple-Gate Enforcement at `handleSaveToRecord`**:
+       - Gate 1 validates patient registration: unresolved identities are rejected.
+       - Gate 2 validates source document provenance: mismatched source identities cannot be committed to target charts, preventing manual form tampering.
+       - Gate 3 validates demographic fields: uncorrected OCR errors must be resolved using source evidence before commitment.
+     - Direct invocation of the save handler or modal dismissal cannot bypass these programmatic gates.
+     - Added Jane Doe (`HV-992-081`) to the central clinic patient registry and EHR profile system (`PATIENTS_MAP`).
+   - **Dedicated Clinical 404 Workstation (`src/pages/NotFoundPage.tsx`)**:
+     - Created dedicated 404 error page matching CareID design language, typography, and card tokens.
+     - Registered at `path: '*'` in `src/routes/index.tsx`, replacing the previous silent redirection to `/dashboard`.
+     - Displays the exact attempted URL path, clinical navigation recovery guidance, and primary CTAs linking directly to the Physician Dashboard and Patient Directory.
+     - Preserved dedicated, contextual domain-specific not-found fallbacks (such as unknown patient IDs in `/patients/:id`).
+   - **Developer Bypass Isolation**:
+     - Guarded the direct Cath Lab time-out bypass button in `src/pages/treatment-offers/TreatmentOfferStatusPage.tsx` with `{import.meta.env.DEV && (...)}`.
+     - Ensures developer fast-path test navigation is stripped in production builds while remaining accessible during local development.
+   - **Secondary Action Corrections**:
+     - `src/pages/settings/ProfessionalProfilePage.tsx`: Converted inert "Upload Photo" into a fully functional file uploader with file type validation (`image/png, image/jpeg, image/webp`), size limitation (<5MB), `FileReader.readAsDataURL` local preview, and real-time state synchronization with the sidebar avatar via `useAuth()`. Added working "Reset" option.
+     - `src/pages/records/PrescriptionsPage.tsx`: Added an "Authorize Refill" action on active prescriptions (e.g., Lisinopril) that opens an interactive modal explaining the simulated e-Rx/Surescripts gateway with realistic clinical verification disclaimers, eliminating inert buttons without falsely claiming external network execution. Added simulated formulary ordering modal to "New Entry".
+   - **Cath Lab UX Corrections (OPT-02 & OPT-03)**:
+     - **OPT-02 (Responsive Vector ECG Sparkline)**: Replaced static raster image with responsive inline vector SVG (`viewBox="0 0 172 26"`, `preserveAspectRatio="xMidYMid meet"`, `stroke="currentColor"`) in `src/pages/cath-lab/CathLabSafetyCheckinPage.tsx`, rendering crisp cardiac waveforms across all display DPIs.
+     - **OPT-03 (Subpixel Ratification Modal Geometry)**: Refined ratification dialog geometry (`max-w-[560px]`, `rounded-2xl`, exact token border `border-[#e1e3e4]`, subpixel padding, and refined cryptographic stamp box) to match Figma node `1:14096`.
+
+3. **Automated Verification & Quality Gates**:
+   - Comprehensive Engineering Hardening Test Suite (`scratch/test_engineering_hardening.js`):
+     - Test 1: Shared Physician Authentication State & Reactive Profile Updating (PASS).
+     - Test 2: OCR Patient Identity Mismatch Hard Stop & Reconciliation Modal (PASS).
+     - Test 3: Dedicated Clinical 404 Workstation & Domain Fallbacks (PASS).
+     - Test 4: Developer Testing Bypass Isolation (PASS).
+     - Test 5: Secondary Action Corrections (Upload Photo & Refill Authorization) (PASS).
+     - Test 6: Cath Lab UX Corrections (Vector ECG & Ratification Modal) (PASS).
+     - Result: 6/6 tests passed (100%).
+   - Regression Verification Across Prior Milestone Test Suites:
+     - Milestone 9 OCR Pipeline (`test_prompt27_ocr_pipeline.js`): 8/8 PASS (100%).
+     - Milestone 10 Scheduling Workflow (`test_prompt30_scheduling_workflow.js`): 10/10 PASS (100%).
+     - Milestone 11 Surgical Encounter (`test_prompt31_encounter_lifecycle.js`): 6/6 PASS (100%).
+     - Milestone 12 Referrals Workflow (`test_milestone12_referrals.js`): 5/5 PASS (100%).
+     - Milestone 13 Reports & Critical Review (`test_milestone13_reports.js`): 4/4 PASS (100%).
+     - Milestone 14 Clinician Settings & Support (`test_milestone14_settings.js`): 5/5 PASS (100%).
+   - Code Quality & Build Checks:
+     - TypeScript `tsc -b --noEmit`: 0 errors.
+     - ESLint: 0 errors, 0 warnings.
+     - Production `vite build`: Clean compile in 5.67s (1,666 modules).
+   - Working Tree & Baseline Integrity: Zero Git commits, zero branch switches, working tree changes preserved locally for user review. Baseline commit `60eb173` preserved intact.
+
+---
+
 ## 5. Governance & Quality Gates
 
 Each milestone must satisfy the following criteria prior to user handover:

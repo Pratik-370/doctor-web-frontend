@@ -17,6 +17,7 @@ import {
 import { Logo } from '@/components/shared/Logo';
 import { Breadcrumbs } from './Breadcrumbs';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 import doctorAvatarAdmin from '@/assets/avatars/doctor-avatar-admin.png';
 import doctorProfilePrimary from '@/assets/avatars/doctor-profile-primary.png';
@@ -24,6 +25,7 @@ import doctorProfilePrimary from '@/assets/avatars/doctor-profile-primary.png';
 export const PatientLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const isSpecialWorkstation =
     location.pathname.includes('/financing') ||
@@ -96,17 +98,17 @@ export const PatientLayout: React.FC = () => {
           <div className="mt-8 px-6 flex items-center gap-4">
             <div className="size-12 rounded-full overflow-hidden shrink-0 shadow-sm border border-slate-200">
               <img
-                src={doctorAvatarAdmin}
-                alt="Dr. Clinical"
+                src={user.sidebarAvatarUrl || doctorAvatarAdmin}
+                alt={user.sidebarDisplayLabel}
                 className="size-full object-cover"
               />
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-base font-semibold text-[#191c1d] leading-6 truncate">
-                Dr. Clinical
+                {user.sidebarDisplayLabel}
               </h2>
               <p className="text-xs font-medium text-[#494552] tracking-[0.5px] leading-4 truncate">
-                Enterprise Healthcare
+                {user.organization}
               </p>
             </div>
           </div>

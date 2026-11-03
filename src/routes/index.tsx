@@ -45,6 +45,7 @@ import { SupportCenterPage } from '@/pages/settings/SupportCenterPage';
 import { PlaceholderPage } from '@/pages/PlaceholderPage';
 import { AuthPlaceholder } from '@/pages/auth/AuthPlaceholder';
 import { FoundationPage } from '@/pages/FoundationPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 const router = createBrowserRouter([
   // Root Redirect to Portal Dashboard
@@ -540,13 +541,13 @@ const router = createBrowserRouter([
         path: '/treatment-offers/:id/completed',
         element: <EncounterCompletedPage />,
       },
-    ],
-  },
 
-  // Fallback Wildcard: Redirect to Dashboard
-  {
-    path: '*',
-    element: <Navigate to="/dashboard" replace />,
+      // Fallback Wildcard within Clinical Workspace
+      {
+        path: '*',
+        element: <NotFoundPage />,
+      },
+    ],
   },
 ]);
 

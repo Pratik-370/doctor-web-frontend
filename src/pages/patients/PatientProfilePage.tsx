@@ -124,11 +124,47 @@ const PATIENTS_MAP: Record<string, PatientProfileData> = {
       hospital: 'General Hospital - Central Labs',
     },
   },
+  // Jane Doe (EHR Registered Patient)
+  'HV-992-081': {
+    name: 'Jane Doe',
+    healthVaultId: 'HV-992-081',
+    mrn: 'HV-992-081',
+    status: 'Stable',
+    ageGenderDob: '38 • F • Jun 15, 1985',
+    bloodGroup: 'B+',
+    primaryPhysician: 'Dr. Clinical',
+    insuranceStatus: 'Active',
+    allergies: 'No known drug allergies (NKDA)',
+    chronicConditions: 'Mild Seasonal Asthma',
+    highRisk: 'None reported',
+    avatarSrc: patientAvatarHero,
+    vitals: {
+      bp: '118/76',
+      bpUnit: 'mmHg',
+      hr: '70',
+      hrUnit: 'bpm',
+      temp: '98.6',
+      tempUnit: '°F',
+      spo2: '99',
+      spo2Unit: '%',
+      resp: '14',
+      respUnit: 'bpm',
+      bmi: '23.1',
+      lastUpdated: 'Nov 04, 2023',
+    },
+    quickFacts: {
+      emergencyContact: 'Robert Doe (Brother)',
+      emergencyPhone: '+1 (555) 234-5678',
+      nurse: 'Sarah Jenkins, RN',
+      hospital: 'Mercy General Hospital',
+    },
+  },
 };
 
 // Aliases for route lookups
 PATIENTS_MAP['1'] = PATIENTS_MAP['HV-884-291'];
 PATIENTS_MAP['994-32A'] = PATIENTS_MAP['PT-84920'];
+PATIENTS_MAP['HV-992-O81'] = PATIENTS_MAP['HV-992-081'];
 
 export const PatientProfilePage: React.FC = () => {
   const navigate = useNavigate();

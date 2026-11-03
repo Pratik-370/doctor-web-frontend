@@ -631,16 +631,19 @@ export const TreatmentOfferStatusPage: React.FC = () => {
                 Withdraw / Cancel Offer
               </button>
 
-              <div className="pt-2 border-t border-slate-100 flex flex-col gap-1">
-                <button
-                  type="button"
-                  onClick={() => navigate(`/treatment-offers/${offer.offerId}/cath-lab-safety`, { state: offer })}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1.5 py-1 text-center transition-colors cursor-pointer"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Developer Testing: Direct Cath Lab Time-Out Bypass</span>
-                </button>
-              </div>
+              {/* Developer Bypass (Restricted to Development Mode via import.meta.env.DEV) */}
+              {import.meta.env.DEV && (
+                <div className="pt-2 border-t border-slate-100 flex flex-col gap-1" data-testid="developer-bypass-container">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/treatment-offers/${offer.offerId}/cath-lab-safety`, { state: offer })}
+                    className="text-[11px] text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1.5 py-1 text-center transition-colors cursor-pointer"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Developer Testing: Direct Cath Lab Time-Out Bypass</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
